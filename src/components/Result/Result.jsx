@@ -29,11 +29,11 @@ const Result = () => {
   console.log(imageData);
   let result = "Everything Looks Good"
   let error = false
-  // if (imageData?.cardType === 0) {
-  //      result = <>Unable to Detect Document</>
-  //    error = true
-  // }
-  // else {
+  if (imageData?.cardType === 0) {
+        result = <>Unable to Detect Document</>
+      error = true
+   }
+  else {
   if (imageData?.dpi < 300) {
     result = <>Quality of Image is Low</>
     error = true  
@@ -49,7 +49,7 @@ const Result = () => {
       }
     }
   }
-  // }
+  }
   return (
     <>
       <Slide
