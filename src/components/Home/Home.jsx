@@ -1,4 +1,4 @@
-import React from 'react'
+import React , {useEffect} from 'react'
 import ParticlesBg from 'particles-bg'
 import {
   Grid,
@@ -7,7 +7,11 @@ import {
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { Link } from 'react-router-dom'
+import { useParams } from 'react-router'
+import { useDispatch } from 'react-redux'
+import { setUserData } from '../../redux/slice/userDataSlice'
 import Arrow from '@material-ui/icons/ArrowDropUp'
+import axios from 'axios'
 
 const useStyles = makeStyles({
   grid: {
@@ -26,6 +30,22 @@ const useStyles = makeStyles({
 
 const Home = () => {
   const classes = useStyles()
+  const {userId} = useParams()
+  const dispatch = useDispatch()
+  useEffect(() => {
+    (async () => {
+      let res = await axios.post("https://tap-issuer-backend-dev.herokuapp.com/investor/getUserDetails",{
+        userId               
+      },{
+        headers:{
+          "apiKey":"5f3cd49bf3bc85f2558e6421",
+          "content-type":"application/json"
+        }
+      });
+      dispatch(setUserData(res.data.data));
+    })()
+  }, [])
+
   return (
     <>
       <ParticlesBg
@@ -49,7 +69,7 @@ const Home = () => {
             <br />
           </Grid>
           <Grid item>
-            <Link className={classes.link} to='/details'>
+            <Link className={classes.link} to='/personal-details'>
               <Button
                 className={classes.button}
                 variant="contained"

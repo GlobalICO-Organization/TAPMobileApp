@@ -7,7 +7,6 @@ import Footer from './components/Footer/index'
 const App = () => {
   let isInitialized = false
   let isInitializing = false
-
   useEffect(() => {
     (async () => {
       if (process.env.REACT_APP_MOBILE_ONLY === 'true') {
@@ -21,6 +20,7 @@ const App = () => {
       }
     })()
   }, [])
+
 
   const loadScript = () => {
     window.onAcuantSdkLoaded = () => initialize()
@@ -38,7 +38,7 @@ const App = () => {
         onSuccess: () => {
           isInitialized = true
           isInitializing = false
-          console.log('Initialized');
+          console.log('Initialized')
         },
         onFail: (code, description) => {
           isInitializing = false
