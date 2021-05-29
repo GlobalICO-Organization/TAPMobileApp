@@ -4,9 +4,10 @@ import {
   Grid,
   Button,
 } from '@material-ui/core'
-import { Alert, AlertTitle } from '@material-ui/lab';
+import { Alert, AlertTitle } from '@material-ui/lab'
 import { makeStyles } from '@material-ui/core/styles'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles({
   container: {
@@ -20,35 +21,35 @@ const useStyles = makeStyles({
     backgroundColor: '#EBEBF5',
     fontFamily: 'Lato,sans-serif',
     color: '#093742',
+  }, link: {
+    textDecoration: 'none',
+    width: "100%"
   },
 })
 
-const Result = () => {
+const CapturePassportResult = () => {
   const imageData = useSelector((state) => state.imageData.value)
   const classes = useStyles()
-  console.log(imageData);
-  let result = "Everything Looks Good"
+  let result = "Ensure all texts are visible."
   let error = false
   if (imageData?.cardType === 0) {
-        result = <>Unable to Detect Document</>
-      error = true
-   }
-  else {
-  if (imageData?.dpi < 300) {
-    result = <>Quality of Image is Low</>
-    error = true  
+    result = <>Unable to Detect Document</>
+    error = true
   } else {
-    if (imageData?.sharpness < 50) {
-      result = <>Image appears Blurry</>
+    if (imageData?.dpi < 300) {
+      result = <>Quality of Image is Low</>
       error = true
-    }
-    else {
-      if (imageData?.glare < 90) {
-        result = <>Image has Glare</>
+    } else {
+      if (imageData?.sharpness < 50) {
+        result = <>Image appears Blurry</>
         error = true
+      } else {
+        if (imageData?.glare < 90) {
+          result = <>Image has Glare</>
+          error = true
+        }
       }
     }
-  }
   }
   return (
     <>
@@ -85,11 +86,15 @@ const Result = () => {
           >
             <Alert
               variant="outlined"
-              style={{ width: "100%" }}
+              style={
+                {
+                  width: "100%"
+                }
+              }
               severity={error ? "error" : "success"}>
               <AlertTitle
                 style={{
-                  textAlign:'left'
+                  textAlign: 'left'
                 }}
               >{error ? "Please Retry" : "You May Continue"}</AlertTitle>
               {result}
@@ -125,13 +130,15 @@ const Result = () => {
             xl={6}
             className={classes.item}
           >
-            <Button
-              fullWidth
-              className={classes.button}
-              variant="contained"
-            >
-              Continue With This Image
+            <Link className={classes.link} to='/capture-selfie'>
+              <Button
+                fullWidth
+                className={classes.button}
+                variant="contained"
+              >
+                Continue With This Image
             </Button>
+            </Link>
           </Grid>
 
           <Grid
@@ -144,16 +151,20 @@ const Result = () => {
             xl={6}
             className={classes.item}
           >
+           
+            <Link className={classes.link} to='/capture-passport-details'>
             <Button
               fullWidth
               variant="outlined"
             >
               Retry
             </Button>
+            </Link>
+
           </Grid>
         </Grid>
       </Slide>
     </>
   )
 }
-export default Result
+export default CapturePassportResult
