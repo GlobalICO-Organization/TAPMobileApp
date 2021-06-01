@@ -1,89 +1,103 @@
-import React, { 
-  useEffect, 
-  useState 
+import React, {
+  useEffect,
+  useState
 } from 'react'
 import {
-  Slide,
   Grid,
+  Slide,
+  CircularProgress,
   List,
   ListItem,
+  Button,
   ListItemText,
   Divider,
   ListItemIcon,
-  Button,
-  CircularProgress,
 } from '@material-ui/core'
-import { 
-  useHistory, 
-  useParams 
+import {
+  useHistory,
+  useParams
 } from 'react-router-dom'
 import {
   useDispatch,
   useSelector,
 } from 'react-redux'
+import {
+  Alert,
+  AlertTitle
+} from '@material-ui/lab'
 import { makeStyles } from '@material-ui/core/styles'
+import { setFrontData } from '../../redux/slice/frontDataSlice'
 import { setRouteData } from '../../redux/slice/routeDataSlice'
 import Arrow from '@material-ui/icons/ArrowRight'
-import axios from 'axios'
 import { isMobile } from 'react-device-detect';
 
-const useStyles = makeStyles((theme) => ({
-  input: {
-    display: "none",
-  },
+const useStyles = makeStyles({
   container: {
     minHeight: '90vh',
     textAlign: 'center',
   },
-  list: {
-    width: '100%',
+  circularProgress: {
+    color: '#093742',
   },
-  label:{
-    width:"100%",
+  list: {
+    width: "100%",
+  },
+  item: {
+    marginBottom: '3vh',
+  },
+  alert: {
+    width: '100%'
+  },
+  alertTitle: {
+    textAlign: 'left'
   },
   button: {
     backgroundColor: '#EBEBF5',
     fontFamily: 'Lato,sans-serif',
     color: '#093742',
-  },
-  item: {
-    marginTop: '3vh'
-  },
-  circularProgress: {
-    color: '#093742',
-  },
-  link: {
-    textDecoration: 'none',
-    width: "100%"
-  },
-}))
+  }
+})
 
-const CaptureSelfie = () => {
+const CaptureIDFront = () => {
   const { userId } = useParams()
-
   const classes = useStyles()
   const history = useHistory()
   const dispatch = useDispatch()
-
-  const IDFront = useSelector((state) => state.frontData.value)
-  const IDBack = useSelector((state) => state.backData.value)
-  const userData = useSelector((state) => state.userData.value)
   const routeData = useSelector((state) => state.routeData.value)
 
-  const [selfie, setSelfie] = useState('')
-  const [source, setSource] = useState('')
+  const [imageData, setImageData] = useState({})
   const [processing, setProcessing] = useState(false)
+
+  let result = <>Ensure all texts are visible.</>
+  let error = false
+  if (imageData?.dpi < 300) {
+    result = <>Quality of Image is Low</>
+    error = true
+  } else {
+    if (imageData?.sharpness < 50) {
+      result = <>Image appears Blurry</>
+      error = true
+    } else {
+      if (imageData?.glare < 90) {
+        result = <>Image has Glare</>
+        error = true
+      } else {
+        if (imageData?.cardType === 0) {
+          result = <>Unable to Detect Document</>
+          error = true
+        }
+      }
+    }
+  }
 
   useEffect(() => {
     (async () => {
-      if (routeData.isCaptureIDBack) {
+      if (routeData.isCaptureIDInfo) {
         dispatch(setRouteData({
           isHome: true,
           isPersonalInfo: true,
           isCaptureIDInfo: true,
           isCaptureIDFront: true,
-          isCaptureIDBack: true,
-          isCaptureSelfie:true,
         }))
       }
       else {
@@ -92,51 +106,29 @@ const CaptureSelfie = () => {
     })()
   }, [])
 
-
-  const getBase64 = (file, cb) => {
-    let reader = new FileReader()
-    reader.readAsDataURL(file)
-    reader.onload = function () {
-      cb(reader.result)
-    }
-    reader.onerror = function (err) {
-      console.log(err)
-    }
-  }
-
-  const handleSubmit = async () => {
+  const onCaptured = (response) => {
     setProcessing(true)
-    let k = {
-      ...userData,
-      IDFront,
-      IDBack,
-      selfie,
-    }
-    let response = await axios.post("https://tap-issuer-backend-dev.herokuapp.com/investor/submitKYCDetails",
-      k, {
-      headers: {
-        "apiKey": "5f3cd49bf3bc85f2558e6421",
-        "content-type": "application/json"
-      }
-    })
-    setProcessing(false)
-    if (response.data.success && response.data.data) {
-      history.push(`/${userId}/submit-details/true`)
-    }
-    else {
-      history.push(`/${userId}/submit-details/false`)
-    }
   }
 
-  const handleCapture = (target) => {
-    if (target.files) {
-      if (target.files.length !== 0) {
-        const file = target.files[0]
-        getBase64(file, (r) => setSelfie(r))
-        const newUrl = URL.createObjectURL(file)
-        setSource(newUrl)
-      }
-    }
+  const onCropped = (response) => {
+    setImageData(response)
+    setProcessing(false)
+  }
+
+  const onError = (err) => {
+    console.log(err)
+  }
+
+  const handleSubmit = () => {
+    dispatch(setFrontData(imageData.image.data))
+    history.push(`/${userId}/capture-id-back`)
+  }
+
+  const handleCapture = () => {
+    window.AcuantCamera.startManualCapture({
+      onCaptured,
+      onCropped
+    }, onError)
   }
 
   return (
@@ -147,7 +139,7 @@ const CaptureSelfie = () => {
         mountOnEnter
         unmountOnExit
       >
-        { !processing && source.length === 0 ?
+        {!processing && JSON.stringify(imageData) === '{}' ?
           <Grid
             container
             direction="column"
@@ -167,8 +159,8 @@ const CaptureSelfie = () => {
             >
               <h2>
                 <b>
-                  {!isMobile && 'Instruction to Upload your Selfie'}
-                  {isMobile && 'Instruction to Capture your Selfie'}
+                  {isMobile && "Instruction to Capture Front of ID"}
+                  {!isMobile && "Instruction to Upload Front of ID"}
                 </b>
               </h2>
             </Grid>
@@ -183,7 +175,21 @@ const CaptureSelfie = () => {
               xl={6}
               className={classes.item}
             >
-              <List className={classes.list}>
+              <List
+                className={classes.list}
+              >
+                <Divider />
+                <ListItem >
+                  <ListItemIcon>
+                    <Arrow />
+                  </ListItemIcon>
+                  <ListItemText>
+
+                    {isMobile && "Place ID close to device."}
+                    {!isMobile && "Ensure quality of image is good"}
+
+                  </ListItemText>
+                </ListItem>
                 <Divider />
                 <ListItem >
                   <ListItemIcon>
@@ -191,26 +197,30 @@ const CaptureSelfie = () => {
                   </ListItemIcon>
                   <ListItemText>
                     Ensure sufficient light.
-              </ListItemText>
+                  </ListItemText>
                 </ListItem>
+
                 <Divider />
+                {isMobile && <>
+                  <ListItem >
+                    <ListItemIcon>
+                      <Arrow />
+                    </ListItemIcon>
+                    <ListItemText>
+                      Hold device steady.
+                  </ListItemText>
+                  </ListItem>
+                  <Divider />
+                </>
+                }
+
                 <ListItem >
                   <ListItemIcon>
                     <Arrow />
                   </ListItemIcon>
                   <ListItemText>
-                  {isMobile && 'Hold device steady.'}
-                  {!isMobile && 'Ensure quality of the image is good'}
-              </ListItemText>
-                </ListItem>
-                <Divider />
-                <ListItem >
-                  <ListItemIcon>
-                    <Arrow />
-                  </ListItemIcon>
-                  <ListItemText>
-                    Make sure your face is visible.
-              </ListItemText>
+                    Make sure all edges of the ID are visible.
+                  </ListItemText>
                 </ListItem>
                 <Divider />
                 <ListItem >
@@ -219,12 +229,11 @@ const CaptureSelfie = () => {
                   </ListItemIcon>
                   <ListItemText>
                     Make sure there are no glare and shadows .
-              </ListItemText>
+                  </ListItemText>
                 </ListItem>
                 <Divider />
               </List>
             </Grid>
-
             <Grid
               container
               item
@@ -237,47 +246,27 @@ const CaptureSelfie = () => {
               xl={6}
               className={classes.item}
             >
-
-              <input
-                accept="image/*"
-                className={classes.input}
-                id="icon-button-file"
-                type="file"
-                capture="user"
-                onChange={(e) => handleCapture(e.target)}
-              />
-              <label className={classes.label} htmlFor="icon-button-file">
-                <Button
-                  fullWidth
-                  className={classes.button}
-                  aria-label="upload picture"
-                  component="span"
-                  variant="outlined"
-                >
-                  Capture
+              <Button
+                fullWidth
+                variant="outlined"
+                className={classes.button}
+                onClick={() => handleCapture()}
+              >
+                Capture
               </Button>
-              </label>
             </Grid>
-          </Grid> : <> { !processing && <Grid
+          </Grid> : <> {!processing && <Grid
             container
             direction="column"
             justify="flex-start"
             alignItems="center"
             className={classes.container}
           >
-            <Grid
-              container
-              item
-              xs={10}
-              sm={10}
-              md={10}
-              lg={6}
-              xl={6}
-              className={classes.item}
-            >
+
+            <Grid item>
               <h2>
                 <b>
-                  Ensure your face is visible
+                  Result
               </b>
               </h2>
             </Grid>
@@ -292,8 +281,29 @@ const CaptureSelfie = () => {
               xl={6}
               className={classes.item}
             >
+              <Alert
+                variant="outlined"
+                className={classes.alert}
+                severity={error ? "error" : "success"}>
+                <AlertTitle
+                  className={classes.alertTitle}
+                >{error ? "Please Retry" : "You May Continue"}</AlertTitle>
+                {result}
+              </Alert>
+            </Grid>
+
+            <Grid
+              container
+              item
+              xs={10}
+              sm={10}
+              md={10}
+              lg={6}
+              xl={6}
+              className={classes.item}
+            >
               <img
-                src={source}
+                src={JSON.stringify(imageData) !== '{}' ? imageData.image.data : ' '}
                 alt="User Document"
                 width="100%"
                 height="100%"
@@ -315,10 +325,10 @@ const CaptureSelfie = () => {
                 fullWidth
                 onClick={handleSubmit}
                 className={classes.button}
-                variant="contained"
+                variant="outlined"
               >
-                Submit
-            </Button>
+                Next
+              </Button>
             </Grid>
 
             <Grid
@@ -334,25 +344,25 @@ const CaptureSelfie = () => {
               <Button
                 fullWidth
                 variant="outlined"
-                onClick={() => setSource("")}
+                onClick={() => setImageData({})}
               >
                 Retry
-            </Button>
+          </Button>
             </Grid>
           </Grid>
-        }
-        </> 
+          }
+          </>
         }
       </Slide>
       {
         processing && <Grid
-        container
-        item
-        direction="column"
-        className={classes.container}
-        justify="center"
-        alignItems="center"
-        >          
+          container
+          item
+          direction="column"
+          className={classes.container}
+          justify="center"
+          alignItems="center"
+        >
           <CircularProgress
             className={classes.circularProgress}
           />
@@ -362,4 +372,4 @@ const CaptureSelfie = () => {
   )
 }
 
-export default CaptureSelfie
+export default CaptureIDFront
