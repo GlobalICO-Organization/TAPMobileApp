@@ -184,7 +184,7 @@ const PersonalInfo = () => {
       temp.approvedByICA = false
       temp.isFromUSA = userData.country.toLowerCase() === "united states of america" ? true : false
       temp.companyId = userData?.company?.id
-      temp.company = "crypto asset rating inc"
+      temp.company = "crypto asset rating"
       dispatch(setUserData(temp))
       history.push(`/${userId}/capture-id-info`)
     },
