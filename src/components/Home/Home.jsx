@@ -15,6 +15,7 @@ import {
 import {
   useDispatch,
 } from 'react-redux'
+import CryptoJS from 'crypto-js';
 import {isMobile} from 'react-device-detect';
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
@@ -46,8 +47,14 @@ const Home = () => {
   const classes = useStyles()
   const history = useHistory()
   const dispatch = useDispatch()
-  const { userId } = useParams() 
+  let { userId } = useParams() 
+  
+  let tuserId = userId.replace(/p1L2u3S/g, '+' ).replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '=');
+  let bytes  = CryptoJS.AES.decrypt(tuserId, 'direction is better than speed');
+  const apiKey = bytes.toString(CryptoJS.enc.Utf8);
+
   const [processing, setProcessing] = useState(false)
+  const [companyName, setCompanyName ] = useState('');
 
   useEffect(() => {
     (async () => {
@@ -69,11 +76,11 @@ const Home = () => {
   useEffect(() => {
     (async () => {
       setProcessing(true)
-      let res = await axios.post("https://tap-issuer-backend-dev.herokuapp.com/investor/getUserDetails", {
+      let res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/investor/getUserDetails`, {
         userId
       }, {
         headers: {
-          "apiKey": "5f3cd49bf3bc85f2558e6421",
+          apiKey,
           "content-type": "application/json"
         }
       })
@@ -81,7 +88,19 @@ const Home = () => {
         setProcessing(false)
         history.push('/error')
       }
+      console.log(res);
+    
+      // let words = res.data.data.company.split(' ');  
+      // let CapitalizedWords = [];  
+      // words.forEach(element => {  
+      //     CapitalizedWords.push(element[0]?.toUpperCase() + element?.slice(1, element.length));  
+      // });  
+      // res.data.data.company = CapitalizedWords.join(' ');
+    
+      setCompanyName(res.data.data.company.trim());
+      res.data.data.apiKey = apiKey;
       dispatch(setUserData(res.data.data))
+      console.log(res);
       setProcessing(false)
     })()
   }, [])
@@ -105,8 +124,8 @@ const Home = () => {
           >
             <Grid item
             >
-              <h2>Welcome to CAR,</h2>
-              <h2>To begin your KYC click start.</h2>
+              <h2>Welcome to {isMobile ? <><br/></> : <></>} {companyName}</h2>
+              <h2>To begin your KYC {isMobile ? <><br/></> : <></>} click start.</h2>
               <br />
             </Grid>
             <Grid item>

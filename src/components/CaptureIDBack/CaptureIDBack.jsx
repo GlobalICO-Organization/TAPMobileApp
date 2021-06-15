@@ -257,7 +257,7 @@ const CaptureIDBack = () => {
               </Button>
             </Grid>
 
-            <Grid
+            {/* <Grid
             container
             item
             justify="center"
@@ -276,7 +276,7 @@ const CaptureIDBack = () => {
               >
                 Skip
               </Button>
-            </Grid>
+            </Grid> */}
 
           </Grid> : <> {!processing && <Grid
             container

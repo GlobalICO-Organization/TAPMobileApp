@@ -70,6 +70,8 @@ const CaptureSelfie = () => {
   const userData = useSelector((state) => state.userData.value)
   const routeData = useSelector((state) => state.routeData.value)
 
+  console.log(userData);
+
   const [selfie, setSelfie] = useState('')
   const [source, setSource] = useState('')
   const [processing, setProcessing] = useState(false)
@@ -112,13 +114,15 @@ const CaptureSelfie = () => {
       IDBack,
       selfie,
     }
-    let response = await axios.post("https://tap-issuer-backend-dev.herokuapp.com/investor/submitKYCDetails",
+    
+    let response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/investor/submitKYCDetails`,
       k, {
       headers: {
-        "apiKey": "5f3cd49bf3bc85f2558e6421",
+        "apiKey": userData.apiKey,
         "content-type": "application/json"
       }
     })
+    
     setProcessing(false)
     if (response.data.success && response.data.data) {
       history.push(`/${userId}/submit-details/true`)

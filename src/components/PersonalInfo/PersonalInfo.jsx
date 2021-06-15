@@ -150,6 +150,7 @@ const PersonalInfo = () => {
     },
     onSubmit: values => {
       const temp = {}
+      temp.apiKey = userData?.apiKey;
       temp.firstName = values.firstName
       temp.middleName = values.middleName
       temp.lastName = values.lastName
@@ -183,8 +184,7 @@ const PersonalInfo = () => {
       temp.dateOfSubmission = Date.now()
       temp.approvedByICA = false
       temp.isFromUSA = userData.country.toLowerCase() === "united states of america" ? true : false
-      temp.companyId = userData?.company?.id
-      temp.company = "crypto asset rating inc"
+      temp.company = userData?.company.toLowerCase().trim();
       dispatch(setUserData(temp))
       history.push(`/${userId}/capture-id-info`)
     },
@@ -196,9 +196,9 @@ const PersonalInfo = () => {
   useEffect(() => {
     (async () => {
       setProcessing(true)
-      let res = await axios.get("https://tap-issuer-backend-dev.herokuapp.com/shared/getCountries", {
+      let res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/shared/getCountries`, {
         headers: {
-          "apiKey": "5f3cd49bf3bc85f2558e6421",
+          apiKey:userData?.apiKey,
           "content-type": "application/json"
         }
       })
