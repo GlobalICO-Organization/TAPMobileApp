@@ -9,8 +9,10 @@ import {
   Button,
   CircularProgress,
   FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
 } from '@material-ui/core'
-import { formatPhoneNumber } from 'react-phone-number-input'
 import { makeStyles, withStyles } from '@material-ui/core/styles'
 import { useHistory, useParams } from 'react-router-dom'
 import { setRouteData } from '../../redux/slice/routeDataSlice'
@@ -20,6 +22,7 @@ import { useFormik } from 'formik'
 import MuiTextField from '@material-ui/core/TextField'
 import axios from 'axios'
 import moment from 'moment'
+import MuiFormControl from '@material-ui/core/FormControl';
 
 const TextField = withStyles({
   root: {
@@ -28,6 +31,14 @@ const TextField = withStyles({
     }
   }
 })(MuiTextField)
+
+const FormControl = withStyles({
+  root: {
+    "& .MuiInputBase-root.Mui-disabled": {
+      color: "rgba(0, 0, 0, 1)"
+    }
+  }
+})(MuiFormControl)
 
 const useStyles = makeStyles({
   container: {
@@ -63,6 +74,9 @@ const PersonalInfo = () => {
   const routeData = useSelector((state) => state.routeData.value)
   const { userId } = useParams()
 
+  console.log("personalInfo");
+  console.log(userData);
+
   useEffect(() => {
     (async () => {
       if (routeData.isHome) {
@@ -79,15 +93,15 @@ const PersonalInfo = () => {
 
   const formik = useFormik({
     initialValues: {
-      firstName: userData.firstName ? userData.firstName : ' ',
-      middleName: userData.middleName ? userData.middleName : ' ',
-      lastName: userData.lastName ? userData.lastName : ' ',
-      presentStreetAddress1: userData.street_address_1 ? userData.street_address_1 : ' ',
-      presentStreetAddress2: userData.street_address_2 ? userData.street_address_2 : ' ',
-      presentCity: userData.city ? userData.city : ' ',
-      presentState: userData.state ? userData.state : ' ',
-      presentZipCode: userData.zipCode ? userData.zipCode : ' ',
-      presentCountry: userData.country ? userData.country : ' ',
+      firstName: userData.firstName ? userData.firstName : '',
+      middleName: userData.middleName ? userData.middleName : '',
+      lastName: userData.lastName ? userData.lastName : '',
+      presentStreetAddress1: userData.street_address_1 ? userData.street_address_1 : '',
+      presentStreetAddress2: userData.street_address_2 ? userData.street_address_2 : '',
+      presentCity: userData.city ? userData.city : '',
+      presentState: userData.state ? userData.state : '',
+      presentZipCode: userData.zipCode ? userData.zipCode : '',
+      presentCountry: userData.country ? userData.country : '',
       checked: false,
       permanentStreetAddress1: '',
       permanentStreetAddress2: '',
@@ -95,9 +109,10 @@ const PersonalInfo = () => {
       permanentState: '',
       permanentZipCode: '',
       permanentCountry: '',
-      contactNumber: userData.contactNumber ? userData.contactNumber : ' ',
-      email: userData.email ? userData.email : ' ',
+      contactNumber: userData.contactNumber ? userData.contactNumber : '',
+      email: userData.email ? userData.email : '',
     },
+
     validate: values => {
       const errors = {}
 
@@ -134,14 +149,51 @@ const PersonalInfo = () => {
         errors.permanentState = false
       }
 
-      if (values.permanentCountry?.trim().length === 0) {
+      if (values.permanentCountry === '') {
         errors.permanentCountry = true
       } else {
         errors.permanentCountry = false
       }
 
+      if (values.presentStreetAddress1?.trim().length === 0) {
+        errors.presentStreetAddress1 = true
+      } else {
+        errors.presentStreetAddress1 = false
+      }
+
+      if (values.presentCity?.trim().length === 0) {
+        errors.presentCity = true
+      } else {
+        errors.presentCity = false
+      }
+
+      if (values.presentZipCode?.trim().length === 0) {
+        errors.presentZipCode = true
+      } else {
+        errors.presentZipCode = false
+      }
+
+      if (values.presentState?.trim().length === 0) {
+        errors.presentState = true
+      } else {
+        errors.presentState = false
+      }
+
+      if (values.presentCountry === '') {
+        errors.presentCountry = true
+      } else {
+        errors.presentCountry = false
+      }
+
+
+      if (values.contactNumber?.trim().length === 0) {
+        errors.contactNumber = true
+      } else {
+        errors.contactNumber = false
+      }
+
       for (const value of Object.values(errors)) {
-        if (value) {
+        if (value) {    
           return errors
         }
       }
@@ -174,7 +226,6 @@ const PersonalInfo = () => {
       temp.pCity = values.presentCity
       temp.pState = values.presentState
       temp.pCountry = values.presentCountry
-      temp.walletAddress = userData.walletAddress
       temp.accountCreationDate = userData.creationTS
       temp.investorId = userData._id
       temp.dob = moment(userData.dateOfBirth).format('YYYY-MM-DD')
@@ -183,8 +234,14 @@ const PersonalInfo = () => {
       temp.resubmit = false
       temp.dateOfSubmission = Date.now()
       temp.approvedByICA = false
-      temp.isFromUSA = userData.country.toLowerCase() === "united states of america" ? true : false
-      temp.company = userData?.company.toLowerCase().trim();
+      temp.isFromUSA = userData?.country?.toLowerCase() === "united states of america" ? true : false
+      temp.company = userData?.company?.toLowerCase().trim();
+      temp.investor = userData?.investor;
+      temp.mtid = userData?.mtid;
+      temp.walletAddress = userData?.walletAddress ? userData.walletAddress : userData?.wallet
+      temp.role = userData?.role;
+      temp.roles = userData?.roles
+      
       dispatch(setUserData(temp))
       history.push(`/${userId}/capture-id-info`)
     },
@@ -198,11 +255,11 @@ const PersonalInfo = () => {
       setProcessing(true)
       let res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/shared/getCountries`, {
         headers: {
-          apiKey:userData?.apiKey,
+          apiKey: userData?.apiKey,
           "content-type": "application/json"
         }
       })
-      setCountries(res.data.data.sort(function (a, b) {
+      setCountries(res?.data?.data?.sort(function (a, b) {
         if (a.name.en < b.name.en) { return -1; }
         if (a.name.en > b.name.en) { return 1; }
         return 0;
@@ -211,7 +268,6 @@ const PersonalInfo = () => {
     })()
   }, [])
 
-  console.log(countries)
 
   return (
     <>
@@ -331,7 +387,7 @@ const PersonalInfo = () => {
             >
               <b>
                 Present Address
-            </b>
+              </b>
             </Grid>
             <Grid
               container
@@ -344,13 +400,14 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                disabled
+                disabled={userData.investor}
+                required={!userData.investor}
                 fullWidth
-                id="presentStreetAdderss1"
+                id="presentStreetAddress1"
                 name="presentStreetAddress1"
                 label="Street Address 1"
                 variant="outlined"
-                error={formik.touched.presentStreetAdderss1 ? formik.errors?.presentStreetAdderss1 : false}
+                error={formik.touched.presentStreetAddress1 ? formik.errors?.presentStreetAddress1 : false}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.presentStreetAddress1}
@@ -367,7 +424,7 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                disabled
+                disabled={userData.investor}
                 fullWidth
                 id="presentStreetAdderss2"
                 name="presentStreetAddress2"
@@ -390,7 +447,8 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                disabled
+                disabled={userData.investor}
+                required={!userData.investor}
                 fullWidth
                 id="presentCity"
                 name="presentCity"
@@ -413,7 +471,8 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                disabled
+                disabled={userData.investor}
+                required={!userData.investor}
                 fullWidth
                 id="presentZipCode"
                 name="presentZipCode"
@@ -437,7 +496,8 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                disabled
+                disabled={userData.investor}
+                required={!userData.investor}
                 fullWidth
                 id="presentState"
                 name="presentState"
@@ -460,18 +520,30 @@ const PersonalInfo = () => {
               lg={6}
               xl={6}
             >
-              <TextField
-                disabled
-                fullWidth
-                id="presentCountry"
-                name="presentCountry"
-                label="Country"
+              <FormControl
                 variant="outlined"
-                error={formik.touched.presentCountry ? formik.errors?.presentCountry : false}
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                value={formik.values.presentCountry}
-              />
+                required={!userData.investor}
+                disabled = {userData.investor}
+                style={{
+                  width: "100%"
+                }} >
+                <InputLabel id="presentCountryLabel">Present Country</InputLabel>
+                <Select
+                  labelId="presentCountryLabel"
+                  label="Present Country"
+                  id="presentCountry"
+                  name="presentCountry"
+                  error={formik.touched.presentCountry ? formik.errors?.presentCountry : false}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.presentCountry}
+                  onChange={formik.handleChange}
+                >
+                  {
+                    countries?.map((c, index) => <MenuItem key={index} value={c.name.en}> {c.name.en} </MenuItem>)
+                  }
+                  <MenuItem value=''>None</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
 
 
@@ -643,9 +715,45 @@ const PersonalInfo = () => {
               lg={6}
               xl={6}
             >
+              <FormControl
+                variant="outlined"
+                required
+                style={{
+                  width: "100%"
+                }} >
+                <InputLabel id="permanentCountryLabel">Permanent Country</InputLabel>
+                <Select
+                  labelId="permanentCountryLabel"
+                  label="Permanent Country"
+                  id="permanentCountry"
+                  name="permanentCountry"
+                  error={formik.touched.permanentCountry ? formik.errors?.permanentCountry : false}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.permanentCountry}
+                  onChange={formik.handleChange}
+                >
+                  {
+                    countries?.map((c, index) => <MenuItem key={index} value={c.name.en}> {c.name.en} </MenuItem>)
+                  }
+                  <MenuItem value=''>None</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+
+
+            <Grid
+              container
+              item
+              className={classes.item}
+              xs={10}
+              sm={10}
+              md={10}
+              lg={6}
+              xl={6}
+            >
               <b>
                 Contact Details
-            </b>
+              </b>
             </Grid>
             <Grid
               container
@@ -658,14 +766,14 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                disabled
+                disabled={userData.investor}
                 fullWidth
                 id="contactNumber"
                 name="contactNumber"
                 label="Contact Number"
                 variant="outlined"
                 onBlur={formik.handleBlur}
-                value={formatPhoneNumber("+" + formik.values.contactNumber)}
+                value={formik.values.contactNumber}
                 error={formik.touched.contactNumber ? formik.errors?.contactNumber : false}
                 onChange={formik.handleChange}
               />
@@ -713,7 +821,7 @@ const PersonalInfo = () => {
                 variant="outlined"
               >
                 Next
-            </Button>
+              </Button>
             </Grid>
           </Grid>
         </form>

@@ -76,6 +76,7 @@ const Home = () => {
   useEffect(() => {
     (async () => {
       setProcessing(true)
+      
       let res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/investor/getUserDetails`, {
         userId
       }, {
@@ -84,10 +85,17 @@ const Home = () => {
           "content-type": "application/json"
         }
       })
+
+      console.log("first");
+      console.log(res);
+
       if (!res.data.success || !res.data.data) {
         setProcessing(false)
         history.push('/error')
+        return;
       }
+
+      console.log("second");      
       console.log(res);
     
       // let words = res.data.data.company.split(' ');  
@@ -97,10 +105,13 @@ const Home = () => {
       // });  
       // res.data.data.company = CapitalizedWords.join(' ');
     
-      setCompanyName(res.data.data.company.trim());
+      setCompanyName(res.data?.data?.company?.trim());
       res.data.data.apiKey = apiKey;
       dispatch(setUserData(res.data.data))
+
+      console.log('thrid');
       console.log(res);
+
       setProcessing(false)
     })()
   }, [])

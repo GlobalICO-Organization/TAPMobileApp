@@ -4,7 +4,7 @@ import React, {
 } from 'react'
 import {
   Slide,
-  Grid,
+  Grid, 
   List,
   ListItem,
   ListItemText,
@@ -114,14 +114,26 @@ const CaptureSelfie = () => {
       IDBack,
       selfie,
     }
-    
-    let response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/investor/submitKYCDetails`,
+    let response
+    if(userData.investor) {
+      response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/investor/submitKYCDetails`,
       k, {
       headers: {
         "apiKey": userData.apiKey,
         "content-type": "application/json"
       }
-    })
+    } 
+    )
+  } else {
+    response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/teamMember/submitKYCDetails`,
+      k, {
+      headers: {
+        "apiKey": userData.apiKey,
+        "content-type": "application/json"
+      }
+    } 
+    ) 
+  }
     
     setProcessing(false)
     if (response.data.success && response.data.data) {
