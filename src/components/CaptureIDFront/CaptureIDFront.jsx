@@ -64,7 +64,7 @@ const CaptureIDFront = () => {
   const history = useHistory()
   const dispatch = useDispatch()
   const routeData = useSelector((state) => state.routeData.value)
-
+  const userData = useSelector((state) => state.userData.value)
   const [imageData, setImageData] = useState({})
   const [processing, setProcessing] = useState(false)
 
@@ -147,6 +147,7 @@ const CaptureIDFront = () => {
             alignItems="center"
             className={classes.container}
           >
+
             <Grid
               container
               item
@@ -179,6 +180,21 @@ const CaptureIDFront = () => {
                 className={classes.list}
               >
                 <Divider />
+
+                { userData.cardType === "ID" &&
+                   <>
+                    <ListItem >
+                      <ListItemIcon>
+                        <Arrow />
+                      </ListItemIcon>
+                      <ListItemText>
+                          Provided ID should have your picture, name, address, date of birth,  and its own uniuqe number. If any of condition do not meet your KYC may not complete.
+                      </ListItemText>
+                    </ListItem>
+                    <Divider />
+                  </>
+                }
+
                 <ListItem >
                   <ListItemIcon>
                     <Arrow />
@@ -208,7 +224,7 @@ const CaptureIDFront = () => {
                     </ListItemIcon>
                     <ListItemText>
                       Hold device steady.
-                  </ListItemText>
+                    </ListItemText>
                   </ListItem>
                   <Divider />
                 </>
@@ -267,7 +283,7 @@ const CaptureIDFront = () => {
               <h2>
                 <b>
                   Result
-              </b>
+                </b>
               </h2>
             </Grid>
 
@@ -347,7 +363,7 @@ const CaptureIDFront = () => {
                 onClick={() => setImageData({})}
               >
                 Retry
-          </Button>
+              </Button>
             </Grid>
           </Grid>
           }

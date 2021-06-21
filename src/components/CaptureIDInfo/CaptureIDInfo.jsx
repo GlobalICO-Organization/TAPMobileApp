@@ -15,6 +15,7 @@ import {
 } from '@material-ui/core'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
+import { isMobile } from 'react-device-detect';
 
 const useStyles = makeStyles({
   container: {
@@ -139,7 +140,7 @@ const CaptureIDInfo = () => {
                   }))
                 }}
               >
-                Capture Passport
+               {isMobile ? "Capture" : "Upload" }  Passport
             </Button>
             </Link>
           </Grid>
@@ -168,10 +169,39 @@ const CaptureIDInfo = () => {
                   }))
                 }}
               >
-                Capture Driving Liscense
+                {isMobile ? "Capture" : "Upload" } Driving Liscense
             </Button>
             </Link>
           </Grid>
+
+          <Grid
+            container
+            item
+            xs={10}
+            sm={10}
+            md={10}
+            lg={6}
+            xl={6}
+            justify="center"
+            alignItems="center"
+            className={classes.item}
+          >
+            <Link className={classes.link} to={`/${userId}/capture-id-front`}>
+              <Button
+                className={classes.button}
+                variant="outlined"
+                onClick={() => {
+                  dispatch(setUserData({
+                    ...userData,
+                    cardType: 'ID'
+                  }))
+                }}
+              >
+                {isMobile ? "Capture" : "Upload" } Other ID
+            </Button>
+            </Link>
+          </Grid>
+
 
         </Grid>
       </Slide>

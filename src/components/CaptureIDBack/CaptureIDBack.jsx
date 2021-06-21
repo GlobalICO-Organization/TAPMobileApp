@@ -64,7 +64,7 @@ const CaptureIDBack = () => {
   const history = useHistory()
   const dispatch = useDispatch()
   const routeData = useSelector((state) => state.routeData.value)
-
+  const userData = useSelector((state) => state.userData.value)
   const [imageData, setImageData] = useState({})
   const [processing, setProcessing] = useState(false)
 
@@ -180,6 +180,21 @@ const CaptureIDBack = () => {
                 className={classes.list}
               >
                 <Divider />
+
+                {userData.cardType === "ID" &&
+                  <>
+                    <ListItem >
+                      <ListItemIcon>
+                        <Arrow />
+                      </ListItemIcon>
+                      <ListItemText>
+                        Provided ID should have your picture, name, address, date of birth,  and its own uniuqe number. If any of condition do not meet your KYC may not complete.
+                      </ListItemText>
+                    </ListItem>
+                    <Divider />
+                  </>
+                }
+
                 <ListItem >
                   <ListItemIcon>
                     <Arrow />
@@ -209,7 +224,7 @@ const CaptureIDBack = () => {
                     </ListItemIcon>
                     <ListItemText>
                       Hold device steady.
-                  </ListItemText>
+                    </ListItemText>
                   </ListItem>
                   <Divider />
                 </>
@@ -235,23 +250,23 @@ const CaptureIDBack = () => {
                 <Divider />
               </List>
             </Grid>
-          <Grid
-            container
-            item
-            justify="center"
-            align="center"
-            xs={10}
-            sm={10}
-            md={10}
-            lg={6}
-            xl={6}
-            className={classes.item}
-          >
-            <Button
-              fullWidth
-              variant="outlined"
-              className={classes.button}
-              onClick={() => handleCapture()}
+            <Grid
+              container
+              item
+              justify="center"
+              align="center"
+              xs={10}
+              sm={10}
+              md={10}
+              lg={6}
+              xl={6}
+              className={classes.item}
+            >
+              <Button
+                fullWidth
+                variant="outlined"
+                className={classes.button}
+                onClick={() => handleCapture()}
               >
                 Capture
               </Button>
@@ -290,7 +305,7 @@ const CaptureIDBack = () => {
               <h2>
                 <b>
                   Result
-              </b>
+                </b>
               </h2>
             </Grid>
 
@@ -370,7 +385,7 @@ const CaptureIDBack = () => {
                 onClick={() => setImageData({})}
               >
                 Retry
-          </Button>
+              </Button>
             </Grid>
           </Grid>
           }
