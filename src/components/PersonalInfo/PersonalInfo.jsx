@@ -767,6 +767,7 @@ const PersonalInfo = () => {
             >
               <TextField
                 disabled={userData.investor}
+                required={!userData.investor}
                 fullWidth
                 id="contactNumber"
                 name="contactNumber"

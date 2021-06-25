@@ -67,7 +67,7 @@ const CaptureIDFront = () => {
   const userData = useSelector((state) => state.userData.value)
   const [imageData, setImageData] = useState({})
   const [processing, setProcessing] = useState(false)
-
+  const bk = `/${userId}/capture-id-info`;
   let result = <>Ensure all texts are visible.</>
   let error = false
   if (imageData?.dpi < 300) {
@@ -271,6 +271,29 @@ const CaptureIDFront = () => {
                 Capture
               </Button>
             </Grid>
+
+            <Grid
+              container
+              item
+              justify="center"
+              align="center"
+              xs={10}
+              sm={10}
+              md={10}
+              lg={6}
+              xl={6}
+              className={classes.item}
+            >
+              <Button
+                fullWidth
+                variant="outlined"
+                className={classes.button}
+                onClick={() => history.push(bk)}
+              >
+                Back
+              </Button>
+            </Grid>
+
           </Grid> : <> {!processing && <Grid
             container
             direction="column"
