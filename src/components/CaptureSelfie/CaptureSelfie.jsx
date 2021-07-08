@@ -116,7 +116,7 @@ const CaptureSelfie = () => {
     }
     let response
     if(userData.investor) {
-      response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/investor/submitKYCDetails`,
+      response = await axios.post(`${process.env.REACT_APP_BACKEND_URL_DEV}/investor/submitKYCDetails`,
       k, {
       headers: {
         "apiKey": userData.apiKey,
@@ -125,7 +125,7 @@ const CaptureSelfie = () => {
     } 
     )
   } else {
-    response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/teamMember/submitKYCDetails`,
+    response = await axios.post(`${process.env.REACT_APP_BACKEND_URL_DEV}/teamMember/submitKYCDetails`,
       k, {
       headers: {
         "apiKey": userData.apiKey,

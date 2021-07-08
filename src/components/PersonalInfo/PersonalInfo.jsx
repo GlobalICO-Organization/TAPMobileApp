@@ -253,7 +253,7 @@ const PersonalInfo = () => {
   useEffect(() => {
     (async () => {
       setProcessing(true)
-      let res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/shared/getCountries`, {
+      let res = await axios.get(`${process.env.REACT_APP_BACKEND_URL_DEV}/shared/getCountries`, {
         headers: {
           apiKey: userData?.apiKey,
           "content-type": "application/json"
