@@ -77,7 +77,7 @@ const Home = () => {
     (async () => {
       setProcessing(true)
       
-      let res = await axios.post(`${process.env.REACT_APP_BACKEND_URL_TEST}/investor/getUserDetails`, {
+      let res = await axios.post(`${process.env.REACT_APP_BACKEND_URL_STAGE}/investor/getUserDetails`, {
         userId
       }, {
         headers: {
