@@ -25,7 +25,8 @@
     "redux": "^4.1.0"
   },
   "scripts": {
-    "start": "HTTPS=true PORT=3001 react-scripts start",
+    "start": "react-scripts start",
+    "dev": "HTTPS=true PORT=3001 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
