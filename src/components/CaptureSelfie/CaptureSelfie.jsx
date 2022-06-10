@@ -70,7 +70,7 @@ const CaptureSelfie = () => {
   const userData = useSelector((state) => state.userData.value)
   const routeData = useSelector((state) => state.routeData.value)
 
-  console.log(userData);
+  //console.log(userData);
 
   const [selfie, setSelfie] = useState('')
   const [source, setSource] = useState('')
@@ -136,6 +136,7 @@ const CaptureSelfie = () => {
   }
     
     setProcessing(false)
+
     if (response.data.success && response.data.data) {
       history.push(`/${userId}/submit-details/true`)
     }

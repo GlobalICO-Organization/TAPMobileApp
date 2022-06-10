@@ -26,6 +26,7 @@
   },
   "scripts": {
     "start": "HTTPS=true PORT=3001 react-scripts start",
+    "dev": "set HTTPS=true && set PORT=8090 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
