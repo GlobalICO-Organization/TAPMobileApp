@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "16.13.*",
-    "npm": "8.10.*"
+    "node": "14.*",
+    "npm": "8.*"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.4",
@@ -29,7 +29,7 @@
     "redux": "^4.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "set NODE_OPTIONS=--max_old_space_size=8192 && react-scripts start",
     "dev": "set HTTPS=true && set PORT=3050 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
