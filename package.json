@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "16.13.*",
-    "npm": "8.10.*"
+    "node": "14.*",
+    "npm": "8.*"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.4",
