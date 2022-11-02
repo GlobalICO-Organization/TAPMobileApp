@@ -37,7 +37,7 @@ const SubmitDetails = () => {
         <>
           {result === "true" ? <>
             <h1>KYC Successful</h1><br />
-            <h2> Now you can continue your investment process. </h2>
+            <h2>Once your KYC is approved by NFT Marketplace admin you will receive and email for login.</h2>
           </>
             :
             <>

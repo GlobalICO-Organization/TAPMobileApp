@@ -138,6 +138,7 @@ const CaptureSelfie = () => {
     setProcessing(false)
     if (response.data.success && response.data.data) {
       history.push(`/${userId}/submit-details/true`)
+      setTimeout(()=>window.location.href=`${process.env.REACT_APP_UI_URL}`, 2000)
     }
     else {
       history.push(`/${userId}/submit-details/false`)
