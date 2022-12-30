@@ -78,7 +78,7 @@ const CaptureIDInfo = () => {
         <Grid
           container
           direction="column"
-          justify="flex-start"
+          justifyContent="flex-start"
           alignItems="center"
           className={classes.container}
         >
@@ -102,7 +102,7 @@ const CaptureIDInfo = () => {
 
           <Grid
             container
-            justify="flex-start"
+            justifyContent="flex-start"
             alignItems="center"
             item
             className={classes.item}
@@ -125,7 +125,7 @@ const CaptureIDInfo = () => {
             md={10}
             lg={6}
             xl={6}
-            justify="center"
+            justifyContent="center"
             alignItems="center"
             
           >
@@ -154,7 +154,7 @@ const CaptureIDInfo = () => {
             md={10}
             lg={6}
             xl={6}
-            justify="center"
+            justifyContent="center"
             alignItems="center"
             className={classes.item}
           >
@@ -182,7 +182,7 @@ const CaptureIDInfo = () => {
             md={10}
             lg={6}
             xl={6}
-            justify="center"
+            justifyContent="center"
             alignItems="center"
             className={classes.item}
           >

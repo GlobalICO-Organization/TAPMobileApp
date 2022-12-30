@@ -17,7 +17,7 @@ const Error = ({error}) => {
       item
       container
       direction = "column"
-      justify="center"
+      justifyContent="center"
       alignItems="center"
       className={classes.grid}
     >

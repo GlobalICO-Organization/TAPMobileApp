@@ -1,6 +1,7 @@
 import React, { 
   useEffect, 
-  useState 
+  useState,
+  useCallback
 } from 'react'
 import {
   Slide,
@@ -24,7 +25,8 @@ import {
 import { makeStyles } from '@material-ui/core/styles'
 import { setRouteData } from '../../redux/slice/routeDataSlice'
 import Arrow from '@material-ui/icons/ArrowRight'
-import axios from 'axios'
+import axios from 'axios';
+import Webcam from "react-webcam";
 import { isMobile } from 'react-device-detect';
 
 const useStyles = makeStyles((theme) => ({
@@ -74,7 +76,14 @@ const CaptureSelfie = () => {
 
   const [selfie, setSelfie] = useState('')
   const [source, setSource] = useState('')
-  const [processing, setProcessing] = useState(false)
+  const [processing, setProcessing] = useState(false);
+
+  const webcamRef = React.useRef(null);
+  const videoConstraints = {
+    width: 1040,
+    height: 720,
+    facingMode: "user"
+  };
 
   useEffect(() => {
     (async () => {
@@ -116,7 +125,7 @@ const CaptureSelfie = () => {
     }
     let response
     if(userData.investor) {
-      response = await axios.post(`${process.env.REACT_APP_BACKEND_URL_DEV}/shared/submitKYCDetails`,
+      response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/shared/submitKYCDetails`,
       k, {
       headers: {
         "apiKey": userData.apiKey,
@@ -125,7 +134,7 @@ const CaptureSelfie = () => {
     } 
     )
   } else {
-    response = await axios.post(`${process.env.REACT_APP_BACKEND_URL_DEV}/shared/submitKYCDetails`,
+    response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/shared/submitKYCDetails`,
       k, {
       headers: {
         "apiKey": userData.apiKey,
@@ -147,6 +156,7 @@ const CaptureSelfie = () => {
 
   const handleCapture = (target) => {
     if (target.files) {
+      console.log(target.files);
       if (target.files.length !== 0) {
         const file = target.files[0]
         getBase64(file, (r) => setSelfie(r))
@@ -155,6 +165,20 @@ const CaptureSelfie = () => {
       }
     }
   }
+
+  const capture = useCallback(() => {
+      const imageSrc = webcamRef.current.getScreenshot(); // this is returning base64 image
+      setSelfie(imageSrc);
+      // converting base 64 to file object
+      fetch(imageSrc)
+      .then(res => res.blob())
+      .then(blob => {
+        const file = new File([blob], "selfie.png", { type: "image/png" })
+        const newUrl = URL.createObjectURL(file);
+        setSource(newUrl);
+        console.log(newUrl);
+      })
+    }, [webcamRef]);
 
   return (
     <>
@@ -168,7 +192,7 @@ const CaptureSelfie = () => {
           <Grid
             container
             direction="column"
-            justify="flex-start"
+            justifyContent="flex-start"
             alignItems="center"
             className={classes.container}
           >
@@ -245,7 +269,7 @@ const CaptureSelfie = () => {
             <Grid
               container
               item
-              justify="center"
+              justifyContent="center"
               align="center"
               xs={10}
               sm={10}
@@ -255,30 +279,54 @@ const CaptureSelfie = () => {
               className={classes.item}
             >
 
-              <input
-                accept="image/*"
-                className={classes.input}
-                id="icon-button-file"
-                type="file"
-                capture="user"
-                onChange={(e) => handleCapture(e.target)}
-              />
-              <label className={classes.label} htmlFor="icon-button-file">
-                <Button
-                  fullWidth
+              {isMobile && (<>
+                <input
+                  accept="image/*"
+                  className={classes.input}
+                  id="icon-button-file"
+                  type="file"
+                  capture="user"
+                  onChange={(e) => handleCapture(e.target)}
+                />
+                <label className={classes.label} htmlFor="icon-button-file">
+                  <Button
+                    fullWidth
+                    className={classes.button}
+                    aria-label="upload picture"
+                    component="span"
+                    variant="outlined"
+                  >
+                    Capture
+                </Button>
+                </label>
+              </>)}
+              
+              {/* for laptop */}
+              {!isMobile && (<>
+                <Webcam
+                  audio={false}
+                  height={720}
+                  ref={webcamRef}
+                  screenshotFormat="image/png"
+                  width={1040}
+                  videoConstraints={videoConstraints}
+                />
+                <Button 
                   className={classes.button}
                   aria-label="upload picture"
                   component="span"
                   variant="outlined"
+                  onClick={capture}
+                  style={{margin: '20px 0'}}
                 >
-                  Capture
-              </Button>
-              </label>
+                  Capture Photo
+                </Button>
+              </>)}
             </Grid>
           </Grid> : <> { !processing && <Grid
             container
             direction="column"
-            justify="flex-start"
+            justifyContent="flex-start"
             alignItems="center"
             className={classes.container}
           >
@@ -367,7 +415,7 @@ const CaptureSelfie = () => {
         item
         direction="column"
         className={classes.container}
-        justify="center"
+        justifyContent="center"
         alignItems="center"
         >          
           <CircularProgress

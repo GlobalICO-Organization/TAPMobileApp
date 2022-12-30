@@ -20,7 +20,7 @@ const App = () => {
   }, [])
 
   const initialize = () => {
-    console.log('Initializing')
+    console.log('backend connected url is:', process.env.REACT_APP_BACKEND_URL);
     if (!isInitialized && !isInitializing) {
       isInitializing = true
       let base64Token = btoa(process.env.REACT_APP_USER_NAME + ':' + process.env.REACT_APP_PASSWORD)

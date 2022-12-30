@@ -77,7 +77,7 @@ const Home = () => {
     (async () => {
       setProcessing(true)
       
-      let res = await axios.post(`${process.env.REACT_APP_BACKEND_URL_DEV}/shared/getUserDetails`, {
+      let res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/shared/getUserDetails`, {
         userId
       }, {
         headers: {
@@ -129,7 +129,7 @@ const Home = () => {
           <Grid
             container
             direction="column"
-            justify="center"
+            justifyContent="center"
             alignItems="center"
             className={classes.grid}
           >
@@ -162,7 +162,7 @@ const Home = () => {
           container
           item
           direction="column"
-          justify="center"
+          justifyContent="center"
           alignItems="center"
           className={classes.grid}
         >

@@ -20,7 +20,7 @@ const Header = () => {
         <Toolbar className={classes.toolbar}>
           <Grid
             container
-            justify="center"
+            justifyContent="center"
             alignItems="center"
           >
             <img
