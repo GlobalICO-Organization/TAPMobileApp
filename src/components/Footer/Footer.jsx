@@ -15,7 +15,7 @@ const Footer = () => {
     <>
     <Grid
       container
-      justify="center"
+      justifyContent="center"
       alignItems="center"
       className={classes.root}>
         &copy; 2020 - 2021 CRYPTO ASSET RATING

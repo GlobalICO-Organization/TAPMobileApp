@@ -143,7 +143,7 @@ const CaptureIDFront = () => {
           <Grid
             container
             direction="column"
-            justify="flex-start"
+            justifyContent="flex-start"
             alignItems="center"
             className={classes.container}
           >
@@ -253,7 +253,7 @@ const CaptureIDFront = () => {
             <Grid
               container
               item
-              justify="center"
+              justifyContent="center"
               align="center"
               xs={10}
               sm={10}
@@ -275,7 +275,7 @@ const CaptureIDFront = () => {
             <Grid
               container
               item
-              justify="center"
+              justifyContent="center"
               align="center"
               xs={10}
               sm={10}
@@ -297,7 +297,7 @@ const CaptureIDFront = () => {
           </Grid> : <> {!processing && <Grid
             container
             direction="column"
-            justify="flex-start"
+            justifyContent="flex-start"
             alignItems="center"
             className={classes.container}
           >
@@ -399,7 +399,7 @@ const CaptureIDFront = () => {
           item
           direction="column"
           className={classes.container}
-          justify="center"
+          justifyContent="center"
           alignItems="center"
         >
           <CircularProgress

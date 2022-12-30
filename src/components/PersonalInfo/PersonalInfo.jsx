@@ -253,7 +253,7 @@ const PersonalInfo = () => {
   useEffect(() => {
     (async () => {
       setProcessing(true)
-      let res = await axios.get(`${process.env.REACT_APP_BACKEND_URL_DEV}/shared/getCountries`, {
+      let res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/shared/getCountries`, {
         headers: {
           apiKey: userData?.apiKey,
           "content-type": "application/json"
@@ -281,7 +281,7 @@ const PersonalInfo = () => {
           <Grid
             container
             direction="column"
-            justify="flex-start"
+            justifyContent="flex-start"
             alignItems="center"
             className={classes.container}
           >
@@ -811,7 +811,7 @@ const PersonalInfo = () => {
               md={10}
               lg={6}
               xl={6}
-              justify="center"
+              justifyContent="center"
               alignItems="center"
               className={classes.item}
             >
@@ -833,7 +833,7 @@ const PersonalInfo = () => {
           item
           direction="column"
           className={classes.container}
-          justify="center"
+          justifyContent="center"
           alignItems="center"
         >
           <CircularProgress

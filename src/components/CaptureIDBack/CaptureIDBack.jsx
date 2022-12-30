@@ -144,7 +144,7 @@ const CaptureIDBack = () => {
           <Grid
             container
             direction="column"
-            justify="flex-start"
+            justifyContent="flex-start"
             alignItems="center"
             className={classes.container}
           >
@@ -253,7 +253,7 @@ const CaptureIDBack = () => {
             <Grid
               container
               item
-              justify="center"
+              justifyContent="center"
               align="center"
               xs={10}
               sm={10}
@@ -275,7 +275,7 @@ const CaptureIDBack = () => {
             {/* <Grid
             container
             item
-            justify="center"
+            justifyContent="center"
             align="center"
             xs={10}
             sm={10}
@@ -296,7 +296,7 @@ const CaptureIDBack = () => {
           </Grid> : <> {!processing && <Grid
             container
             direction="column"
-            justify="flex-start"
+            justifyContent="flex-start"
             alignItems="center"
             className={classes.container}
           >
@@ -398,7 +398,7 @@ const CaptureIDBack = () => {
           item
           direction="column"
           className={classes.container}
-          justify="center"
+          justifyContent="center"
           alignItems="center"
         >
           <CircularProgress
