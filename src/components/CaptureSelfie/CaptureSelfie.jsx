@@ -80,7 +80,7 @@ const CaptureSelfie = () => {
 
   const webcamRef = React.useRef(null);
   const videoConstraints = {
-    width: 1040,
+    width: 1020,
     height: 720,
     facingMode: "user"
   };
@@ -308,7 +308,7 @@ const CaptureSelfie = () => {
                   height={720}
                   ref={webcamRef}
                   screenshotFormat="image/png"
-                  width={1040}
+                  width={1020}
                   videoConstraints={videoConstraints}
                 />
                 <Button 
