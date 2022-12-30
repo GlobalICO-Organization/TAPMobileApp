@@ -33,7 +33,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "build": "react-scripts build",
+    "build": "set NODE_OPTIONS=--max_old_space_size=8192 && set HTTPS=true && react-scripts build",
     "start:local": "set HTTPS=true && set PORT=3050 && react-scripts start",
     "start": "set NODE_OPTIONS=--max_old_space_size=8192 && set HTTPS=true && react-scripts start",
     "test": "react-scripts test",
