@@ -29,12 +29,13 @@
     "react-scripts": "5.0.1",
     "react-webcam": "^7.0.1",
     "redux": "^4.2.0",
+    "serve": "^14.1.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "build": "react-scripts build",
     "start:local": "set HTTPS=true && set PORT=3050 && react-scripts start",
-    "start": "set NODE_OPTIONS=--max_old_space_size=8192 && set HTTPS=true && --optimize_for_size --max_old_space_size=8192 react-scripts start",
+    "start": "set NODE_OPTIONS=--max_old_space_size=8192 && set HTTPS=true && react-scripts start",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
