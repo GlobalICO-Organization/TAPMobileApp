@@ -344,7 +344,6 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                disabled
                 fullWidth
                 id="presentStreetAdderss1"
                 name="presentStreetAddress1"
@@ -367,7 +366,6 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                disabled
                 fullWidth
                 id="presentStreetAdderss2"
                 name="presentStreetAddress2"
@@ -390,7 +388,6 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                disabled
                 fullWidth
                 id="presentCity"
                 name="presentCity"
@@ -413,7 +410,6 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                disabled
                 fullWidth
                 id="presentZipCode"
                 name="presentZipCode"
@@ -437,7 +433,6 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                disabled
                 fullWidth
                 id="presentState"
                 name="presentState"
@@ -461,7 +456,6 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                disabled
                 fullWidth
                 id="presentCountry"
                 name="presentCountry"
@@ -658,7 +652,6 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                disabled
                 fullWidth
                 id="contactNumber"
                 name="contactNumber"
