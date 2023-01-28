@@ -11,7 +11,9 @@ const App = () => {
 
   useEffect(() => {
     (async () => {
-      window.onAcuantSdkLoaded = () => initialize()
+      window.onAcuantSdkLoaded = function(){
+        this.initialize();
+    }.bind(this);
       const sdk = document.createElement('script')
       sdk.src = 'AcuantJavascriptWebSdk.min.js'
       sdk.async = true
