@@ -20,7 +20,7 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    setTimeout(()=> window.loadAcuantSdk(), 3000)
+    setTimeout(()=> window.loadAcuantSdk(), 5000)
   })
 
   const initialize = () => {
