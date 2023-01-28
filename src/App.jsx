@@ -16,12 +16,11 @@ const App = () => {
       sdk.src = 'AcuantJavascriptWebSdk.min.js'
       sdk.async = true
       document.body.appendChild(sdk);
-      window.loadAcuantSdk();
     })()
   }, [])
 
   useEffect(() => {
-    setTimeout(()=> window.loadAcuantSdk(), 1000)
+    setTimeout(()=> window.loadAcuantSdk(), 3000)
   })
 
   const initialize = () => {
