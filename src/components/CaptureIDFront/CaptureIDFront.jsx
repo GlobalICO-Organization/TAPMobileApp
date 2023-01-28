@@ -127,7 +127,7 @@ const CaptureIDFront = () => {
   const handleCapture = () => {
     window.AcuantCamera.startManualCapture({
       onCaptured,
-      //onCropped
+      onCropped
     }, onError)
   }
 
