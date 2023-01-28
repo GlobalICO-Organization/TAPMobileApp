@@ -15,9 +15,14 @@ const App = () => {
       const sdk = document.createElement('script')
       sdk.src = 'AcuantJavascriptWebSdk.min.js'
       sdk.async = true
-      document.body.appendChild(sdk)
+      document.body.appendChild(sdk);
+      window.loadAcuantSdk();
     })()
   }, [])
+
+  useEffect(() => {
+    setTimeout(()=> window.loadAcuantSdk(), 1000)
+  })
 
   const initialize = () => {
     console.log('Initializing')

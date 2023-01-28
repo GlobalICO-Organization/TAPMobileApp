@@ -108,8 +108,6 @@ const CaptureIDFront = () => {
 
   const onCaptured = (response) => {
     setProcessing(true)
-    setImageData(response)
-    setProcessing(false)
   }
 
   const onCropped = (response) => {
@@ -129,7 +127,7 @@ const CaptureIDFront = () => {
   const handleCapture = () => {
     window.AcuantCamera.startManualCapture({
       onCaptured,
-      //onCropped
+      onCropped
     }, onError)
   }
 
