@@ -268,7 +268,6 @@ const PersonalInfo = () => {
     })()
   }, [])
 
-
   return (
     <>
       {!processing && <Slide
@@ -400,8 +399,6 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                //disabled={userData.investor}
-                required={true} //required={!userData.investor}
                 fullWidth
                 id="presentStreetAddress1"
                 name="presentStreetAddress1"
@@ -424,7 +421,6 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                //disabled={userData.investor}
                 fullWidth
                 id="presentStreetAdderss2"
                 name="presentStreetAddress2"
@@ -447,8 +443,6 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                //disabled={userData.investor}
-                required={true} //required={!userData.investor}
                 fullWidth
                 id="presentCity"
                 name="presentCity"
@@ -471,8 +465,6 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                //disabled={userData.investor}
-                required={true} //required={!userData.investor}
                 fullWidth
                 id="presentZipCode"
                 name="presentZipCode"
@@ -496,8 +488,6 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                //disabled={userData.investor}
-                required={true} //required={!userData.investor}
                 fullWidth
                 id="presentState"
                 name="presentState"
@@ -520,13 +510,18 @@ const PersonalInfo = () => {
               lg={6}
               xl={6}
             >
-              <FormControl
+            <FormControl>
+              <TextField
+                fullWidth
+                id="presentCountry"
+                name="presentCountry"
+                label="Country"
                 variant="outlined"
                 required={true} //required={!userData.investor}
                 disabled = {userData.investor}
                 style={{
                   width: "100%"
-                }} >
+                }} />
                 <InputLabel id="presentCountryLabel">Present Country</InputLabel>
                 <Select
                   labelId="presentCountryLabel"
@@ -766,8 +761,6 @@ const PersonalInfo = () => {
               xl={6}
             >
               <TextField
-                //disabled={userData.investor}
-                required={true} //required={!userData.investor}
                 fullWidth
                 id="contactNumber"
                 name="contactNumber"

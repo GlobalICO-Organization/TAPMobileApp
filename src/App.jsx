@@ -17,9 +17,13 @@ const App = () => {
       const sdk = document.createElement('script')
       sdk.src = 'AcuantJavascriptWebSdk.min.js'
       sdk.async = true
-      document.body.appendChild(sdk)
+      document.body.appendChild(sdk);
     })()
   }, [])
+
+  useEffect(() => {
+    //setTimeout(()=> window.loadAcuantSdk(), 10000)
+  },[])
 
   const initialize = () => {
     console.log('backend connected url is:', process.env.REACT_APP_BACKEND_URL);
