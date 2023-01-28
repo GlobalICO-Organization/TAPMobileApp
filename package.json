@@ -25,11 +25,12 @@
     "redux": "^4.1.0"
   },
   "scripts": {
-    "build": "set NODE_OPTIONS=--max_old_space_size=8192 && set HTTPS=true && react-scripts build",
+    "build": "react-scripts build",
     "start:local": "set HTTPS=true && set PORT=3050 && react-scripts start",
     "start": "set NODE_OPTIONS=--max_old_space_size=8192 && set HTTPS=true && react-scripts start",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "serve": "serve -l 3050 -s build"
   },
   "eslintConfig": {
     "extends": [
