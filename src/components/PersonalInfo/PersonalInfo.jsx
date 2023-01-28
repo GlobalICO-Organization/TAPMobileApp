@@ -211,8 +211,6 @@ const PersonalInfo = () => {
     })()
   }, [])
 
-  console.log(countries)
-
   return (
     <>
       {!processing && <Slide

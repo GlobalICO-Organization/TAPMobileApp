@@ -121,7 +121,7 @@ const CaptureIDBack = () => {
   }
 
   const handleSubmit = () => {
-    dispatch(setBackData(imageData.image.data))
+    dispatch(setBackData(imageData?.image?.data))
     history.push(`/${userId}/capture-selfie`)
   }
 
@@ -326,7 +326,7 @@ const CaptureIDBack = () => {
               className={classes.item}
             >
               <img
-                src={JSON.stringify(imageData) !== '{}' ? imageData.image.data : ' '}
+                src={JSON.stringify(imageData) !== '{}' ? imageData?.image?.data : ' '}
                 alt="User Document"
                 width="100%"
                 height="100%"

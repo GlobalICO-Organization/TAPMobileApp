@@ -47,8 +47,8 @@ const Home = () => {
   const classes = useStyles()
   const history = useHistory()
   const dispatch = useDispatch()
-  let { userId } = useParams() 
-  
+  let { userId } = useParams()
+
   let tuserId = userId.replace(/p1L2u3S/g, '+' ).replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '=');
   let bytes  = CryptoJS.AES.decrypt(tuserId, 'direction is better than speed');
   const apiKey = bytes.toString(CryptoJS.enc.Utf8);
@@ -63,7 +63,7 @@ const Home = () => {
       }
     })()
   }, [])
-  
+
 
   useEffect(() => {
     (async () => {
@@ -89,15 +89,15 @@ const Home = () => {
         history.push('/error')
       }
       console.log(res);
-    
-      // let words = res.data.data.company.split(' ');  
-      // let CapitalizedWords = [];  
-      // words.forEach(element => {  
-      //     CapitalizedWords.push(element[0]?.toUpperCase() + element?.slice(1, element.length));  
-      // });  
+
+      // let words = res.data.data.company.split(' ');
+      // let CapitalizedWords = [];
+      // words.forEach(element => {
+      //     CapitalizedWords.push(element[0]?.toUpperCase() + element?.slice(1, element.length));
+      // });
       // res.data.data.company = CapitalizedWords.join(' ');
-    
-      setCompanyName(res.data.data.company.trim());
+
+      setCompanyName(res.data?.data?.company.trim());
       res.data.data.apiKey = apiKey;
       dispatch(setUserData(res.data.data))
       console.log(res);
