@@ -24,6 +24,7 @@ const App = () => {
   },[])
 
   const initialize = () => {
+    console.log('backend connected url is:', process.env.REACT_APP_BACKEND_URL);
     console.log('Initializing')
     if (!isInitialized && !isInitializing) {
       isInitializing = true
