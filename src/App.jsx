@@ -12,16 +12,16 @@ const App = () => {
   useEffect(() => {
     (async () => {
       window.onAcuantSdkLoaded = () => initialize()
-      const sdk = document.createElement('script')
-      sdk.src = 'AcuantJavascriptWebSdk.min.js'
-      sdk.async = true
-      document.body.appendChild(sdk);
+      // const sdk = document.createElement('script')
+      // sdk.src = 'AcuantJavascriptWebSdk.min.js'
+      // sdk.async = true
+      // document.body.appendChild(sdk);
     })()
   }, [])
 
   useEffect(() => {
-    setTimeout(()=> window.loadAcuantSdk(), 5000)
-  })
+    //setTimeout(()=> window.loadAcuantSdk(), 10000)
+  },[])
 
   const initialize = () => {
     console.log('Initializing')
