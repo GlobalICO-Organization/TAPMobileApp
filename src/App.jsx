@@ -12,10 +12,10 @@ const App = () => {
   useEffect(() => {
     (async () => {
       window.onAcuantSdkLoaded = () => initialize()
-      // const sdk = document.createElement('script')
-      // sdk.src = 'AcuantJavascriptWebSdk.min.js'
-      // sdk.async = true
-      // document.body.appendChild(sdk);
+      const sdk = document.createElement('script')
+      sdk.src = 'AcuantJavascriptWebSdk.min.js'
+      sdk.async = true
+      document.body.appendChild(sdk);
     })()
   }, [])
 
