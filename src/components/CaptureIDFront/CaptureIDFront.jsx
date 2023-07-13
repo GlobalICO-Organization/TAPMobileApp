@@ -111,6 +111,7 @@ const CaptureIDFront = () => {
   }
 
   const onCropped = (response) => {
+    console.log({response});
     setImageData(response)
     setProcessing(false)
   }
@@ -120,7 +121,7 @@ const CaptureIDFront = () => {
   }
 
   const handleSubmit = () => {
-    dispatch(setFrontData(imageData.image.data))
+    dispatch(setFrontData(imageData?.image?.data))
     history.push(`/${userId}/capture-id-back`)
   }
 
@@ -342,7 +343,7 @@ const CaptureIDFront = () => {
               className={classes.item}
             >
               <img
-                src={JSON.stringify(imageData) !== '{}' ? imageData.image.data : ' '}
+                src={JSON.stringify(imageData) !== '{}' ? imageData?.image?.data : ' '}
                 alt="User Document"
                 width="100%"
                 height="100%"
