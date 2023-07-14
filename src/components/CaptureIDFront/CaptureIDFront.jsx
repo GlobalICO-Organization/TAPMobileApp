@@ -111,7 +111,6 @@ const CaptureIDFront = () => {
   }
 
   const onCropped = (response) => {
-    console.log({response});
     setImageData(response)
     setProcessing(false)
   }
