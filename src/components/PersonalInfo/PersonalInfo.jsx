@@ -202,7 +202,7 @@ const PersonalInfo = () => {
           "content-type": "application/json"
         }
       })
-      setCountries(res.data.data.sort(function (a, b) {
+      setCountries(res.data.data?.sort(function (a, b) {
         if (a.name.en < b.name.en) { return -1; }
         if (a.name.en > b.name.en) { return 1; }
         return 0;
