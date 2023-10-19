@@ -183,8 +183,8 @@ const PersonalInfo = () => {
       temp.resubmit = false
       temp.dateOfSubmission = Date.now()
       temp.approvedByICA = false
-      temp.isFromUSA = userData.country.toLowerCase() === "united states of america" ? true : false
-      temp.company = userData?.company.toLowerCase().trim();
+      temp.isFromUSA = userData.country?.toLowerCase() === "united states of america" ? true : false
+      temp.company = userData?.company?.toLowerCase()?.trim() || process.env.REACT_APP_COMPANY_NAME;
       dispatch(setUserData(temp))
       history.push(`/${userId}/capture-id-info`)
     },
