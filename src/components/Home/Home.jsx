@@ -54,7 +54,7 @@ const Home = () => {
   const apiKey = bytes.toString(CryptoJS.enc.Utf8);
 
   const [processing, setProcessing] = useState(false)
-  const [companyName, setCompanyName ] = useState('');
+  const [companyName, setCompanyName ] = useState(process.env.REACT_APP_COMPANY_NAME);
 
   useEffect(() => {
     (async () => {
@@ -97,7 +97,7 @@ const Home = () => {
       // });
       // res.data.data.company = CapitalizedWords.join(' ');
 
-      setCompanyName(res.data?.data?.company.trim());
+      //setCompanyName(res.data?.data?.company.trim());
       res.data.data.apiKey = apiKey;
       dispatch(setUserData(res.data.data))
       console.log(res);
