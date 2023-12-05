@@ -34,7 +34,7 @@
   },
   "scripts": {
     "build": "set NODE_OPTIONS=--max_old_space_size=8192 && set HTTPS=true && react-scripts build",
-    "start:local": "set HTTPS=true && set PORT=3050 && react-scripts start",
+    "start:local": "set HTTPS=true && PORT=3050 react-scripts --openssl-legacy-provider start",
     "start": "set NODE_OPTIONS=--max_old_space_size=8192 && set HTTPS=true && react-scripts start",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
