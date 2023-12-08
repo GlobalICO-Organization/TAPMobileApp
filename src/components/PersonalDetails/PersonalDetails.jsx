@@ -70,6 +70,7 @@ const PersonalDetails = () => {
       permanentCountry: '',
       contactNumber: userData.contactNumber !== undefined ? "+"+userData.contactNumber : '',
       email: userData.email !== undefined ? userData.email : '',
+      dob: userData.dob ? userData.dob : ''
     },
     validate: values => {
       const errors = {}
@@ -153,6 +154,12 @@ const PersonalDetails = () => {
         errors.email = false
       }
 
+      if (values.dob?.trim().length === 0) {
+        errors.dob = true
+      } else {
+        errors.dob = false
+      }
+
       for(const [key,value] of Object.entries(errors)){
         if(value) {
           return errors;
@@ -184,7 +191,7 @@ const PersonalDetails = () => {
       temp.walletAddress = userData.walletAddress;
       temp.accountCreationDate = userData.creationTS;
       temp.investorId = userData._id;
-      temp.dob = moment(userData.dateOfBirth).format('YYYY-MM-DD');
+      temp.dob = moment(values.dob).format('MM-DD-YYYY');
       temp.approved = false;
       temp.rejected = false;
       temp.resubmit = false;
@@ -555,6 +562,58 @@ const PersonalDetails = () => {
                 value={formik.values.permanentZipCode}
               />
             </Grid>
+
+            {/* Date of Birth */}
+            <br/>
+            <Grid
+              container
+              item
+              className={classes.item}
+              xs={10}
+              sm={10}
+              md={10}
+              lg={6}
+              xl={6}
+            >
+              <b>
+                Date of Birth
+              </b>
+            </Grid>
+            <Grid
+              container
+              item
+              className={classes.item}
+              xs={10}
+              sm={10}
+              md={10}
+              lg={6}
+              xl={6}
+            >
+              <TextField
+                fullWidth
+                required
+                id="dob"
+                name="dob"
+                label="Date of Birth"
+                variant="outlined"
+                type="date"
+                onBlur={formik.handleBlur}
+                value={formik.values.dob}
+                error={formik.touched.dob ? Boolean(formik.errors?.dob) : false}
+                format="mm-dd-yyyy"
+                placeholder='mm-dd-yyyy'
+                onChange={formik.handleChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                InputProps={{
+                  inputProps: {
+                    min: '01-01-1900', // Optional: Set minimum allowed date
+                  },
+                }}          
+              />
+            </Grid>
+            
             <Grid
               container
               item
