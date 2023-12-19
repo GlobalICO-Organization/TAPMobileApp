@@ -54,7 +54,7 @@ const Home = () => {
   const apiKey = bytes.toString(CryptoJS.enc.Utf8);
 
   const [processing, setProcessing] = useState(false)
-  const [companyName, setCompanyName ] = useState('');
+  const [companyName, setCompanyName ] = useState(process.env.REACT_APP_COMPANY_NAME);
 
   useEffect(() => {
     (async () => {
