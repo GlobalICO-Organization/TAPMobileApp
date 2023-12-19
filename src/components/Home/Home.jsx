@@ -97,7 +97,7 @@ const Home = () => {
       // });
       // res.data.data.company = CapitalizedWords.join(' ');
 
-      setCompanyName(res.data?.data?.company.trim());
+      setCompanyName(res.data?.data?.company?.trim());
       res.data.data.apiKey = apiKey;
       dispatch(setUserData(res.data.data))
       console.log(res);
