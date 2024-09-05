@@ -203,7 +203,16 @@ const PersonalInfo = () => {
   useEffect(() => {
     (async () => {
       setProcessing(true)
-      let res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/shared/getCountries`, {
+      const apiData = process.env.REACT_APP_SERVER_URLS;
+      const jsonArray = JSON.parse(apiData)
+      const getUrlsByKeyValue = (key, value) => {
+        return jsonArray
+            .filter(item => item.key === key && item.value === value)
+            .map(item => item.url); // Retrieve only the URLs
+      };
+      const urls = getUrlsByKeyValue(userData?.apiKey);
+      console.log(urls)
+      let res = await axios.get(`${urls[0]}/shared/getCountries`, {
         headers: {
           apiKey:userData?.apiKey,
           "content-type": "application/json"
@@ -679,10 +688,10 @@ const PersonalInfo = () => {
                   inputProps: {
                     min: '01-01-1900', // Optional: Set minimum allowed date
                   },
-                }}          
+                }}
               />
             </Grid>
-            
+
             <Grid
               container
               item

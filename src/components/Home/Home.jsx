@@ -52,6 +52,14 @@ const Home = () => {
   let tuserId = userId.replace(/p1L2u3S/g, '+' ).replace(/s1L2a3S4h/g, '/').replace(/e1Q2u3A4l/g, '=');
   let bytes  = CryptoJS.AES.decrypt(tuserId, 'direction is better than speed');
   const apiKey = bytes.toString(CryptoJS.enc.Utf8);
+  const apiData = process.env.REACT_APP_SERVER_URLS;
+  const jsonArray = JSON.parse(apiData)
+  const getUrlsByKeyValue = (key, value) => {
+    return jsonArray
+        .filter(item => item.key === key && item.value === value)
+        .map(item => item.url); // Retrieve only the URLs
+  };
+  const urls = getUrlsByKeyValue(apiKey);
 
   const [processing, setProcessing] = useState(false)
   const [companyName, setCompanyName ] = useState('');
@@ -76,7 +84,8 @@ const Home = () => {
   useEffect(() => {
     (async () => {
       setProcessing(true)
-      let res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/investor/getUserDetails`, {
+
+      let res = await axios.post(`${urls[0]}/investor/getUserDetails`, {
         userId
       }, {
         headers: {
@@ -100,7 +109,6 @@ const Home = () => {
       setCompanyName(res.data?.data?.company.trim());
       res.data.data.apiKey = apiKey;
       dispatch(setUserData(res.data.data))
-      console.log(res);
       setProcessing(false)
     })()
   }, [])

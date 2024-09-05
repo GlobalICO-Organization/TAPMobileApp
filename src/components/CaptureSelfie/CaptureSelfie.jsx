@@ -1,6 +1,6 @@
-import React, { 
-  useEffect, 
-  useState 
+import React, {
+  useEffect,
+  useState
 } from 'react'
 import {
   Slide,
@@ -13,9 +13,9 @@ import {
   Button,
   CircularProgress,
 } from '@material-ui/core'
-import { 
-  useHistory, 
-  useParams 
+import {
+  useHistory,
+  useParams
 } from 'react-router-dom'
 import {
   useDispatch,
@@ -70,7 +70,6 @@ const CaptureSelfie = () => {
   const userData = useSelector((state) => state.userData.value)
   const routeData = useSelector((state) => state.routeData.value)
 
-  console.log(userData);
 
   const [selfie, setSelfie] = useState('')
   const [source, setSource] = useState('')
@@ -114,15 +113,23 @@ const CaptureSelfie = () => {
       IDBack,
       selfie,
     }
-    
-    let response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/investor/submitKYCDetails`,
+    const apiData = process.env.REACT_APP_SERVER_URLS;
+    const jsonArray = JSON.parse(apiData)
+    const getUrlsByKeyValue = (key, value) => {
+      return jsonArray
+          .filter(item => item.key === key && item.value === value)
+          .map(item => item.url); // Retrieve only the URLs
+    };
+    const urls = getUrlsByKeyValue(userData?.apiKey);
+
+    let response = await axios.post(`${urls[0]}/investor/submitKYCDetails`,
       k, {
       headers: {
         "apiKey": userData.apiKey,
         "content-type": "application/json"
       }
     })
-    
+
     setProcessing(false)
     if (response.data.success && response.data.data) {
       history.push(`/${userId}/submit-details/true`)
@@ -345,7 +352,7 @@ const CaptureSelfie = () => {
             </Grid>
           </Grid>
         }
-        </> 
+        </>
         }
       </Slide>
       {
@@ -356,7 +363,7 @@ const CaptureSelfie = () => {
         className={classes.container}
         justify="center"
         alignItems="center"
-        >          
+        >
           <CircularProgress
             className={classes.circularProgress}
           />
