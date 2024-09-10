@@ -84,6 +84,7 @@ const Home = () => {
   useEffect(() => {
     (async () => {
       setProcessing(true)
+      console.log(urls)
 
       let res = await axios.post(`${urls[0]}/investor/getUserDetails`, {
         userId
