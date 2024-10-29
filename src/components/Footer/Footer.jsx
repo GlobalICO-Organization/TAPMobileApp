@@ -18,9 +18,7 @@ const Footer = () => {
       justify="center"
       alignItems="center"
       className={classes.root}>
-        &copy; 2020 - 2021 CRYPTO ASSET RATING
-        <br />
-        ALL RIGHTS RESERVED.
+        &copy; VEEP copyright © 2024 All rights reserved.
     </Grid>
     </>
   )
