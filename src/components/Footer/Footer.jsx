@@ -18,7 +18,7 @@ const Footer = () => {
       justify="center"
       alignItems="center"
       className={classes.root}>
-        &copy; 2020 - 2021 CRYPTO ASSET RATING
+        &copy; © 2023 - 2024 VruddhiX
         <br />
         ALL RIGHTS RESERVED.
     </Grid>

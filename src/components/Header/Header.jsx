@@ -5,6 +5,7 @@ import {
   Toolbar,
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import {color} from "@material-ui/system";
 
 const useStyles = makeStyles({
   toolbar: {
@@ -23,12 +24,8 @@ const Header = () => {
             justify="center"
             alignItems="center"
           >
-            <img
-              src="/car.png"
-              alt="car.png"
-              height="50"
-              width="150"
-            />
+
+            <h3 className="company_name" style={{ color: 'black' }}>VruddhiX</h3>
           </Grid>
         </Toolbar>
       </AppBar>
