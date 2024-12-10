@@ -66,9 +66,7 @@ const Home = () => {
 
   useEffect(() => {
     (async () => {
-      if(!isMobile) {
-        alert('We recommend you to use mobile app to complete your KYC for better results.')
-      }
+
     })()
   }, [])
 
