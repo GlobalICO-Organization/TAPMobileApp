@@ -1,5 +1,6 @@
 import React, {
   useEffect,
+  useRef,
   useState
 } from 'react'
 import {
@@ -32,12 +33,18 @@ import Arrow from '@material-ui/icons/ArrowRight'
 import { isMobile } from 'react-device-detect';
 
 const useStyles = makeStyles({
+  input: {
+    display: "none",
+  },
   container: {
     minHeight: '90vh',
     textAlign: 'center',
   },
   circularProgress: {
     color: '#093742',
+  },
+  label: {
+    width: "100%",
   },
   list: {
     width: '100%',
@@ -67,6 +74,9 @@ const CaptureIDBack = () => {
 
   const [imageData, setImageData] = useState({})
   const [processing, setProcessing] = useState(false)
+  const [videoStream, setVideoStream] = useState(null);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
 
   let result = <>Ensure all texts are visible.</>
   let error = false
@@ -107,29 +117,86 @@ const CaptureIDBack = () => {
     })()
   }, [])
 
-  const onCaptured = (response) => {
-    setProcessing(true)
-  }
+  // const onCaptured = (response) => {
+  //   setProcessing(true)
+  // }
 
-  const onCropped = (response) => {
-    setImageData(response)
-    setProcessing(false)
-  }
+  // const onCropped = (response) => {
+  //   setImageData(response)
+  //   setProcessing(false)
+  // }
 
-  const onError = (err) => {
-    console.log(err)
-  }
+  // const onError = (err) => {
+  //   console.log(err)
+  // }
 
   const handleSubmit = () => {
-    dispatch(setBackData(imageData.image.data))
+    dispatch(setBackData(imageData))
     history.push(`/${userId}/capture-selfie`)
   }
 
-  const handleCapture = () => {
-    window.AcuantCamera.startManualCapture({
-      onCaptured,
-      onCropped
-    }, onError)
+  // const handleCapture = () => {
+  //   window.AcuantCamera.startManualCapture({
+  //     onCaptured,
+  //     onCropped
+  //   }, onError)
+  // }
+
+  const handleCapture = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      });
+      setVideoStream(stream);
+
+      // Attach the video stream to the video element
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+    } catch (error) {
+      console.error('Error accessing camera:', error);
+    }
+  };
+
+  const capturePhoto = () => {
+    if (!videoRef.current || !canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const video = videoRef.current;
+    const context = canvas.getContext('2d');
+
+    // Set canvas dimensions to match the video frame
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Draw the current video frame on the canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Convert canvas to image data
+    const imageDataUrl = canvas.toDataURL('image/png');
+    setImageData(imageDataUrl);
+
+    // Stop the video stream
+    if (videoStream) {
+      videoStream.getTracks().forEach((track) => track.stop());
+      setVideoStream(null); // Clear the video stream state
+    }
+
+    // Detach the video element
+    if (videoRef.current) {
+      videoRef.current.srcObject = null; // Detach the stream from the video element
+    }
+  };
+
+  const handleFileUpload = (target) => {
+    if (target.files) {
+      if (target.files.length !== 0) {
+        const file = target.files[0]
+        const newUrl = URL.createObjectURL(file)
+        setImageData(newUrl)
+      }
+    }
   }
 
   return (
@@ -140,7 +207,7 @@ const CaptureIDBack = () => {
         mountOnEnter
         unmountOnExit
       >
-        {!processing && JSON.stringify(imageData) === '{}' ?
+        {(!processing && !videoStream) && JSON.stringify(imageData) === '{}' ?
           <Grid
             container
             direction="column"
@@ -209,7 +276,7 @@ const CaptureIDBack = () => {
                     </ListItemIcon>
                     <ListItemText>
                       Hold device steady.
-                  </ListItemText>
+                    </ListItemText>
                   </ListItem>
                   <Divider />
                 </>
@@ -235,50 +302,50 @@ const CaptureIDBack = () => {
                 <Divider />
               </List>
             </Grid>
-          <Grid
-            container
-            item
-            justify="center"
-            align="center"
-            xs={10}
-            sm={10}
-            md={10}
-            lg={6}
-            xl={6}
-            className={classes.item}
-          >
-            <Button
-              fullWidth
-              variant="outlined"
-              className={classes.button}
-              onClick={() => handleCapture()}
+            <Grid
+              container
+              item
+              justify="center"
+              align="center"
+              xs={10}
+              sm={10}
+              md={10}
+              lg={6}
+              xl={6}
+              className={classes.item}
+            >
+              <input
+                accept="image/*"
+                className={classes.input}
+                id="icon-button-file"
+                type="file"
+                capture="user"
+                onChange={(e) => handleFileUpload(e.target)}
+              />
+              <label className={classes.label} htmlFor="icon-button-file">
+                <Button
+                  fullWidth
+                  className={classes.button}
+                  aria-label="upload picture"
+                  component="span"
+                  variant="outlined"
+                >
+                  Upload
+                </Button>
+              </label>
+              <Button
+                fullWidth
+                style={{ marginTop: '20px' }}
+                aria-label="capture picture"
+                variant="outlined"
+                className={classes.button}
+                onClick={() => handleCapture()}
               >
                 Capture
               </Button>
             </Grid>
 
-            {/* <Grid
-            container
-            item
-            justify="center"
-            align="center"
-            xs={10}
-            sm={10}
-            md={10}
-            lg={6}
-            xl={6}
-            className={classes.item}
-          >
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => history.push(`/${userId}/capture-selfie`)}
-              >
-                Skip
-              </Button>
-            </Grid> */}
-
-          </Grid> : <> {!processing && <Grid
+          </Grid> : <> {(!processing && !videoStream) && <Grid
             container
             direction="column"
             justify="flex-start"
@@ -290,7 +357,7 @@ const CaptureIDBack = () => {
               <h2>
                 <b>
                   Result
-              </b>
+                </b>
               </h2>
             </Grid>
 
@@ -326,7 +393,8 @@ const CaptureIDBack = () => {
               className={classes.item}
             >
               <img
-                src={JSON.stringify(imageData) !== '{}' ? imageData.image.data : ' '}
+                src={imageData}
+                // src={JSON.stringify(imageData) !== '{}' ? imageData.image.data : ' '}
                 alt="User Document"
                 width="100%"
                 height="100%"
@@ -370,13 +438,31 @@ const CaptureIDBack = () => {
                 onClick={() => setImageData({})}
               >
                 Retry
-          </Button>
+              </Button>
             </Grid>
           </Grid>
           }
           </>
         }
       </Slide>
+
+      {videoStream && (
+        <div>
+          <video ref={videoRef} style={{ width: '100%', height: '500px' }} />
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
+            <Button
+              variant="outlined"
+              className={classes.button}
+              onClick={capturePhoto}
+            >
+              Capture Photo
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <canvas ref={canvasRef} style={{ display: 'none' }} />
+
       {
         processing && <Grid
           container

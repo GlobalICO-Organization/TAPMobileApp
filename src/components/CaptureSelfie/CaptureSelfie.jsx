@@ -1,5 +1,6 @@
 import React, {
   useEffect,
+  useRef,
   useState
 } from 'react'
 import {
@@ -38,8 +39,8 @@ const useStyles = makeStyles((theme) => ({
   list: {
     width: '100%',
   },
-  label:{
-    width:"100%",
+  label: {
+    width: "100%",
   },
   button: {
     backgroundColor: '#EBEBF5',
@@ -73,7 +74,10 @@ const CaptureSelfie = () => {
 
   const [selfie, setSelfie] = useState('')
   const [source, setSource] = useState('')
-  const [processing, setProcessing] = useState(false)
+  const [processing, setProcessing] = useState(false);
+  const [videoStream, setVideoStream] = useState(null);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
 
   useEffect(() => {
     (async () => {
@@ -117,11 +121,10 @@ const CaptureSelfie = () => {
     const jsonArray = JSON.parse(apiData)
     const getUrlsByKeyValue = (key, value) => {
       return jsonArray
-          .filter(item => item.key === key && item.value === value)
-          .map(item => item.url); // Retrieve only the URLs
+        .filter(item => item.key === key && item.value === value)
+        .map(item => item.url); // Retrieve only the URLs
     };
     const urls = getUrlsByKeyValue(userData?.apiKey);
-
     let response = await axios.post(`${urls[0]}/investor/submitKYCDetails`,
       k, {
       headers: {
@@ -139,7 +142,24 @@ const CaptureSelfie = () => {
     }
   }
 
-  const handleCapture = (target) => {
+  const handleCapture = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      });
+      setVideoStream(stream);
+
+      // Attach the video stream to the video element
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+    } catch (error) {
+      console.error('Error accessing camera:', error);
+    }
+  };
+
+  const handleFileUpload = (target) => {
     if (target.files) {
       if (target.files.length !== 0) {
         const file = target.files[0]
@@ -150,6 +170,36 @@ const CaptureSelfie = () => {
     }
   }
 
+  const capturePhoto = () => {
+    if (!videoRef.current || !canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const video = videoRef.current;
+    const context = canvas.getContext('2d');
+
+    // Set canvas dimensions to match the video frame
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Draw the current video frame on the canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Convert canvas to image data
+    const imageDataUrl = canvas.toDataURL('image/png');
+    setSource(imageDataUrl);
+
+    // Stop the video stream
+    if (videoStream) {
+      videoStream.getTracks().forEach((track) => track.stop());
+      setVideoStream(null); // Clear the video stream state
+    }
+
+    // Detach the video element
+    if (videoRef.current) {
+      videoRef.current.srcObject = null; // Detach the stream from the video element
+    }
+  };
+
   return (
     <>
       <Slide
@@ -158,7 +208,7 @@ const CaptureSelfie = () => {
         mountOnEnter
         unmountOnExit
       >
-        { !processing && source.length === 0 ?
+        {(!processing && !videoStream) && source.length === 0 ?
           <Grid
             container
             direction="column"
@@ -202,7 +252,7 @@ const CaptureSelfie = () => {
                   </ListItemIcon>
                   <ListItemText>
                     Ensure sufficient light.
-              </ListItemText>
+                  </ListItemText>
                 </ListItem>
                 <Divider />
                 <ListItem >
@@ -210,9 +260,9 @@ const CaptureSelfie = () => {
                     <Arrow />
                   </ListItemIcon>
                   <ListItemText>
-                  {isMobile && 'Hold device steady.'}
-                  {!isMobile && 'Ensure quality of the image is good'}
-              </ListItemText>
+                    {isMobile && 'Hold device steady.'}
+                    {!isMobile && 'Ensure quality of the image is good'}
+                  </ListItemText>
                 </ListItem>
                 <Divider />
                 <ListItem >
@@ -221,7 +271,7 @@ const CaptureSelfie = () => {
                   </ListItemIcon>
                   <ListItemText>
                     Make sure your face is visible.
-              </ListItemText>
+                  </ListItemText>
                 </ListItem>
                 <Divider />
                 <ListItem >
@@ -230,7 +280,7 @@ const CaptureSelfie = () => {
                   </ListItemIcon>
                   <ListItemText>
                     Make sure there are no glare and shadows .
-              </ListItemText>
+                  </ListItemText>
                 </ListItem>
                 <Divider />
               </List>
@@ -255,7 +305,7 @@ const CaptureSelfie = () => {
                 id="icon-button-file"
                 type="file"
                 capture="user"
-                onChange={(e) => handleCapture(e.target)}
+                onChange={(e) => handleFileUpload(e.target)}
               />
               <label className={classes.label} htmlFor="icon-button-file">
                 <Button
@@ -265,11 +315,22 @@ const CaptureSelfie = () => {
                   component="span"
                   variant="outlined"
                 >
-                  Capture
-              </Button>
+                  Upload
+                </Button>
               </label>
+              <Button
+                fullWidth
+                className={classes.button}
+                style={{ marginTop: '20px' }}
+                aria-label="capture picture"
+                component="span"
+                onClick={handleCapture}
+                variant="outlined"
+              >
+                Capture
+              </Button>
             </Grid>
-          </Grid> : <> { !processing && <Grid
+          </Grid> : <> {(!processing && !videoStream) && <Grid
             container
             direction="column"
             justify="flex-start"
@@ -289,7 +350,7 @@ const CaptureSelfie = () => {
               <h2>
                 <b>
                   Ensure your face is visible
-              </b>
+                </b>
               </h2>
             </Grid>
 
@@ -329,7 +390,7 @@ const CaptureSelfie = () => {
                 variant="contained"
               >
                 Submit
-            </Button>
+              </Button>
             </Grid>
 
             <Grid
@@ -348,21 +409,37 @@ const CaptureSelfie = () => {
                 onClick={() => setSource("")}
               >
                 Retry
-            </Button>
+              </Button>
             </Grid>
           </Grid>
-        }
-        </>
+          }
+          </>
         }
       </Slide>
+      {videoStream && (
+        <div>
+          <video ref={videoRef} style={{ width: '100%', height: '500px' }} />
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
+            <Button
+              variant="outlined"
+              className={classes.button}
+              onClick={capturePhoto}
+            >
+              Capture Photo
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <canvas ref={canvasRef} style={{ display: 'none' }} />
       {
         processing && <Grid
-        container
-        item
-        direction="column"
-        className={classes.container}
-        justify="center"
-        alignItems="center"
+          container
+          item
+          direction="column"
+          className={classes.container}
+          justify="center"
+          alignItems="center"
         >
           <CircularProgress
             className={classes.circularProgress}

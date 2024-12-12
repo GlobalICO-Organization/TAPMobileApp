@@ -1,5 +1,6 @@
 import React, {
   useEffect,
+  useRef,
   useState
 } from 'react'
 import {
@@ -36,6 +37,12 @@ const useStyles = makeStyles({
     minHeight: '90vh',
     textAlign: 'center',
   },
+  input: {
+    display: "none",
+  },
+  label: {
+    width: "100%",
+  },
   circularProgress: {
     color: '#093742',
   },
@@ -63,10 +70,14 @@ const CaptureIDFront = () => {
   const classes = useStyles()
   const history = useHistory()
   const dispatch = useDispatch()
+  const [videoStream, setVideoStream] = useState(null);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
   const routeData = useSelector((state) => state.routeData.value)
 
   const [imageData, setImageData] = useState({})
-  const [processing, setProcessing] = useState(false)
+  const [processing, setProcessing] = useState(false);
+  console.info(imageData)
 
   let result = <>Ensure all texts are visible.</>
   let error = false
@@ -106,29 +117,88 @@ const CaptureIDFront = () => {
     })()
   }, [])
 
-  const onCaptured = (response) => {
-    setProcessing(true)
-  }
+  // const onCaptured = (response) => {
+  //   setProcessing(true)
+  // }
 
-  const onCropped = (response) => {
-    setImageData(response)
-    setProcessing(false)
-  }
+  // const onCropped = (response) => {
+  //   setImageData(response)
+  //   setProcessing(false)
+  // }
 
-  const onError = (err) => {
-    console.log(err)
-  }
+  // const onError = (err) => {
+  //   console.log(err)
+  // }
 
   const handleSubmit = () => {
-    dispatch(setFrontData(imageData.image.data))
+    dispatch(setFrontData(imageData))
     history.push(`/${userId}/capture-id-back`)
   }
 
-  const handleCapture = () => {
-    window.AcuantCamera.startManualCapture({
-      onCaptured,
-      onCropped
-    }, onError)
+  // const handleCapture = () => {
+  //   window.AcuantCamera.startManualCapture({
+  //     onCaptured,
+  //     onCropped
+  //   }, onError)
+  // }
+
+  const handleCapture = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      });
+      setVideoStream(stream);
+
+      // Attach the video stream to the video element
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+    } catch (error) {
+      console.error('Error accessing camera:', error);
+    }
+  };
+
+  const capturePhoto = () => {
+    if (!videoRef.current || !canvasRef.current) return;
+  
+    const canvas = canvasRef.current;
+    const video = videoRef.current;
+    const context = canvas.getContext('2d');
+
+  
+    // Set canvas dimensions to match the video frame
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+  
+    // Draw the current video frame on the canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  
+    // Convert canvas to image data
+    const imageDataUrl = canvas.toDataURL('image/png');
+    setImageData(imageDataUrl);
+  
+    // Stop the video stream
+    if (videoStream) {
+      videoStream.getTracks().forEach((track) => track.stop());
+      setVideoStream(null); // Clear the video stream state
+    }
+  
+    // Detach the video element
+    if (videoRef.current) {
+      videoRef.current.srcObject = null; // Detach the stream from the video element
+    }
+  };
+  
+  const handleFileUpload = (target) => {
+    if (target.files) {
+      if (target.files.length !== 0) {
+        const file = target.files[0]
+        console.info(file)
+        const newUrl = URL.createObjectURL(file)
+        setImageData(newUrl)
+      }
+    }
   }
 
   return (
@@ -139,7 +209,7 @@ const CaptureIDFront = () => {
         mountOnEnter
         unmountOnExit
       >
-        {!processing && JSON.stringify(imageData) === '{}' ?
+        {(!processing && !videoStream) && JSON.stringify(imageData) === '{}' ?
           <Grid
             container
             direction="column"
@@ -208,7 +278,7 @@ const CaptureIDFront = () => {
                     </ListItemIcon>
                     <ListItemText>
                       Hold device steady.
-                  </ListItemText>
+                    </ListItemText>
                   </ListItem>
                   <Divider />
                 </>
@@ -246,8 +316,29 @@ const CaptureIDFront = () => {
               xl={6}
               className={classes.item}
             >
+               <input
+                accept="image/*"
+                className={classes.input}
+                id="icon-button-file"
+                type="file"
+                capture="user"
+                onChange={(e) => handleFileUpload(e.target)}
+              />
+              <label className={classes.label} htmlFor="icon-button-file">
+                <Button
+                  fullWidth
+                  className={classes.button}
+                  aria-label="upload picture"
+                  component="span"
+                  variant="outlined"
+                >
+                  Upload
+                </Button>
+              </label>
               <Button
                 fullWidth
+                style={{ marginTop: '20px' }}
+                aria-label="capture picture"
                 variant="outlined"
                 className={classes.button}
                 onClick={() => handleCapture()}
@@ -255,7 +346,7 @@ const CaptureIDFront = () => {
                 Capture
               </Button>
             </Grid>
-          </Grid> : <> {!processing && <Grid
+          </Grid> : <> {(!processing && !videoStream) && <Grid
             container
             direction="column"
             justify="flex-start"
@@ -267,7 +358,7 @@ const CaptureIDFront = () => {
               <h2>
                 <b>
                   Result
-              </b>
+                </b>
               </h2>
             </Grid>
 
@@ -303,7 +394,8 @@ const CaptureIDFront = () => {
               className={classes.item}
             >
               <img
-                src={JSON.stringify(imageData) !== '{}' ? imageData.image.data : ' '}
+              src={imageData}
+               // src={JSON.stringify(imageData) !== '{}' ? imageData.image.data : ' '}
                 alt="User Document"
                 width="100%"
                 height="100%"
@@ -347,13 +439,30 @@ const CaptureIDFront = () => {
                 onClick={() => setImageData({})}
               >
                 Retry
-          </Button>
+              </Button>
             </Grid>
           </Grid>
           }
           </>
         }
       </Slide>
+      {videoStream && (
+        <div>
+          <video ref={videoRef} style={{ width: '100%', height: '500px' }} />
+          <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px'}}>
+          <Button
+            variant="outlined"
+            className={classes.button}
+            onClick={capturePhoto}
+          >
+            Capture Photo
+          </Button>
+          </div>
+        </div>
+      )}
+
+      <canvas ref={canvasRef} style={{ display: 'none' }} />
+
       {
         processing && <Grid
           container
