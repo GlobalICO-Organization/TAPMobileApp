@@ -15,9 +15,7 @@ const Footer = () => {
   const classes = useStyles();
   const location = useLocation();
   // Get the pathname without the leading slash
-  const userId = location.pathname.startsWith('/')
-    ? location.pathname.slice(1)
-    : location.pathname;
+  const userId = location?.pathname?.split('/')[1] || '';
   let tuserId = userId ? userId?.replace(/p1L2u3S/g, '+')?.replace(/s1L2a3S4h/g, '/')?.replace(/e1Q2u3A4l/g, '=') : ''
   let bytes = CryptoJS.AES.decrypt(tuserId, 'direction is better than speed');
   const apiKey = bytes.toString(CryptoJS.enc.Utf8);
