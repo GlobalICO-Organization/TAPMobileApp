@@ -104,8 +104,14 @@ const Home = () => {
       //     CapitalizedWords.push(element[0]?.toUpperCase() + element?.slice(1, element.length));
       // });
       // res.data.data.company = CapitalizedWords.join(' ');
+      if(res.data?.data?.company){
+        setCompanyName(res.data?.data?.company.trim());
+      }else if(res.data?.data?.companyName){
+        setCompanyName(res.data?.data?.companyName.trim());
+      }else{
+        setCompanyName('Vruddhix');
+      }
 
-      setCompanyName(res.data?.data?.company.trim());
       res.data.data.apiKey = apiKey;
       dispatch(setUserData(res.data.data))
       setProcessing(false)

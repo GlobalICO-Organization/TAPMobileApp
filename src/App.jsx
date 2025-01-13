@@ -20,22 +20,19 @@ const App = () => {
   }, [])
 
   const initialize = () => {
-    console.log('Initializing')
+    //console.log('Initializing',process.env.REACT_APP_USER_NAME + ':' + process.env.REACT_APP_PASSWORD)
     if (!isInitialized && !isInitializing) {
       isInitializing = true
       let base64Token = btoa(process.env.REACT_APP_USER_NAME + ':' + process.env.REACT_APP_PASSWORD)
       window.AcuantJavascriptWebSdk.initialize(base64Token, process.env.REACT_APP_ACAS_ENDPOINT, {
         onSuccess: () => {
-          isInitialized = true
           isInitializing = false
-          console.log('Initialized')
+          isInitialized = true;
         },
         onFail: (code, description) => {
-          isInitializing = false
-          console.log('Not Initialized,\nCode: ' + code + ',\nDescription: ' + description)
-          history.push('/error')
+          //console.log(description)
         }
-      })
+      }, 1);
     }
   }
 
