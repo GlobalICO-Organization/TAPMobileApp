@@ -189,14 +189,23 @@ const CaptureIDFront = () => {
       videoRef.current.srcObject = null; // Detach the stream from the video element
     }
   };
-  
+
+  const getBase64 = (file, cb) => {
+    let reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = function () {
+      cb(reader.result)
+    }
+    reader.onerror = function (err) {
+      console.log(err)
+    }
+  }
+
   const handleFileUpload = (target) => {
     if (target.files) {
       if (target.files.length !== 0) {
         const file = target.files[0]
-        console.info(file)
-        const newUrl = URL.createObjectURL(file)
-        setImageData(newUrl)
+        getBase64(file, (r) => setImageData(r))
       }
     }
   }

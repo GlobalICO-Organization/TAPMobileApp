@@ -72,8 +72,7 @@ const CaptureSelfie = () => {
   const routeData = useSelector((state) => state.routeData.value)
 
 
-  const [selfie, setSelfie] = useState('')
-  const [source, setSource] = useState('')
+  const [selfie, setSelfie] = useState({})
   const [processing, setProcessing] = useState(false);
   const [videoStream, setVideoStream] = useState(null);
   const videoRef = useRef(null);
@@ -164,8 +163,6 @@ const CaptureSelfie = () => {
       if (target.files.length !== 0) {
         const file = target.files[0]
         getBase64(file, (r) => setSelfie(r))
-        const newUrl = URL.createObjectURL(file)
-        setSource(newUrl)
       }
     }
   }
@@ -186,7 +183,7 @@ const CaptureSelfie = () => {
 
     // Convert canvas to image data
     const imageDataUrl = canvas.toDataURL('image/png');
-    setSource(imageDataUrl);
+    setSelfie(imageDataUrl);
 
     // Stop the video stream
     if (videoStream) {
@@ -208,7 +205,7 @@ const CaptureSelfie = () => {
         mountOnEnter
         unmountOnExit
       >
-        {(!processing && !videoStream) && source.length === 0 ?
+        {(!processing && !videoStream) && JSON.stringify(selfie) === '{}' ?
           <Grid
             container
             direction="column"
@@ -365,7 +362,7 @@ const CaptureSelfie = () => {
               className={classes.item}
             >
               <img
-                src={source}
+                src={selfie}
                 alt="User Document"
                 width="100%"
                 height="100%"
@@ -406,7 +403,7 @@ const CaptureSelfie = () => {
               <Button
                 fullWidth
                 variant="outlined"
-                onClick={() => setSource("")}
+                onClick={() => setSelfie({})}
               >
                 Retry
               </Button>
