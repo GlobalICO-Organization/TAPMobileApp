@@ -109,7 +109,7 @@ const Home = () => {
       }else if(res.data?.data?.companyName){
         setCompanyName(res.data?.data?.companyName.trim());
       }else{
-        setCompanyName('Vruddhix');
+        setCompanyName('VEEP');
       }
 
       res.data.data.apiKey = apiKey;

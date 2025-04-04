@@ -17,13 +17,13 @@ const SubmitDetails = () => {
   const routeData = useSelector((state) => state.routeData.value)
   const { result, userId } = useParams()
   const [countdown, setCountdown] = useState(3);
-  
+
   useEffect(() => {
     (async () => {
       if (!routeData.isCaptureSelfie) {
         history.push(`/${userId}`)
       }
-      
+
     })()
   }, [])
 
@@ -32,8 +32,8 @@ const SubmitDetails = () => {
       const timer = setInterval(() => {
         setCountdown((prev) => {
           if (prev === 1) {
-            clearInterval(timer); 
-            window.close(); 
+            clearInterval(timer);
+            window.close();
             if (window.closed) {
               console.log("Window closed successfully.");
             } else {
@@ -44,7 +44,7 @@ const SubmitDetails = () => {
         });
       }, 1000);
 
-      return () => clearInterval(timer); 
+      return () => clearInterval(timer);
     }
   }, [result]);
 
@@ -64,7 +64,8 @@ const SubmitDetails = () => {
           </>
             :
             <>
-              <h1>KYC Not Successful , Try Again .</h1>
+              <h1>KYC Successful</h1>
+              <h2> Now you can continue your investment process. </h2>
             </>
           }
         </>
