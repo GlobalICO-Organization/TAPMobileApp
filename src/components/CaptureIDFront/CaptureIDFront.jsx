@@ -161,29 +161,29 @@ const CaptureIDFront = () => {
 
   const capturePhoto = () => {
     if (!videoRef.current || !canvasRef.current) return;
-  
+
     const canvas = canvasRef.current;
     const video = videoRef.current;
     const context = canvas.getContext('2d');
 
-  
+
     // Set canvas dimensions to match the video frame
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-  
+
     // Draw the current video frame on the canvas
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-  
+
     // Convert canvas to image data
     const imageDataUrl = canvas.toDataURL('image/png');
     setImageData(imageDataUrl);
-  
+
     // Stop the video stream
     if (videoStream) {
       videoStream.getTracks().forEach((track) => track.stop());
       setVideoStream(null); // Clear the video stream state
     }
-  
+
     // Detach the video element
     if (videoRef.current) {
       videoRef.current.srcObject = null; // Detach the stream from the video element
@@ -333,17 +333,17 @@ const CaptureIDFront = () => {
                 capture="user"
                 onChange={(e) => handleFileUpload(e.target)}
               />
-              <label className={classes.label} htmlFor="icon-button-file">
-                <Button
-                  fullWidth
-                  className={classes.button}
-                  aria-label="upload picture"
-                  component="span"
-                  variant="outlined"
-                >
-                  Upload
-                </Button>
-              </label>
+              {/*<label className={classes.label} htmlFor="icon-button-file">*/}
+              {/*  <Button*/}
+              {/*    fullWidth*/}
+              {/*    className={classes.button}*/}
+              {/*    aria-label="upload picture"*/}
+              {/*    component="span"*/}
+              {/*    variant="outlined"*/}
+              {/*  >*/}
+              {/*    Upload*/}
+              {/*  </Button>*/}
+              {/*</label>*/}
               <Button
                 fullWidth
                 style={{ marginTop: '20px' }}

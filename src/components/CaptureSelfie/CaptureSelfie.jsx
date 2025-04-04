@@ -304,7 +304,7 @@ const CaptureSelfie = () => {
                 capture="user"
                 onChange={(e) => handleFileUpload(e.target)}
               />
-              <label className={classes.label} htmlFor="icon-button-file">
+              {/*<label className={classes.label} htmlFor="icon-button-file">
                 <Button
                   fullWidth
                   className={classes.button}
@@ -314,7 +314,7 @@ const CaptureSelfie = () => {
                 >
                   Upload
                 </Button>
-              </label>
+              </label>*/}
               <Button
                 fullWidth
                 className={classes.button}

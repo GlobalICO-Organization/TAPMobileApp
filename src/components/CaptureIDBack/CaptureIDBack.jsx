@@ -332,17 +332,17 @@ const CaptureIDBack = () => {
                 capture="user"
                 onChange={(e) => handleFileUpload(e.target)}
               />
-              <label className={classes.label} htmlFor="icon-button-file">
-                <Button
-                  fullWidth
-                  className={classes.button}
-                  aria-label="upload picture"
-                  component="span"
-                  variant="outlined"
-                >
-                  Upload
-                </Button>
-              </label>
+              {/*<label className={classes.label} htmlFor="icon-button-file">*/}
+              {/*  <Button*/}
+              {/*    fullWidth*/}
+              {/*    className={classes.button}*/}
+              {/*    aria-label="upload picture"*/}
+              {/*    component="span"*/}
+              {/*    variant="outlined"*/}
+              {/*  >*/}
+              {/*    Upload*/}
+              {/*  </Button>*/}
+              {/*</label>*/}
               <Button
                 fullWidth
                 style={{ marginTop: '20px' }}

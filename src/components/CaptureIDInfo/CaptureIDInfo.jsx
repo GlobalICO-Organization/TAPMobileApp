@@ -113,65 +113,87 @@ const CaptureIDInfo = () => {
           >
             <label>*Recommended</label>
           </Grid>
+          <br/>
+          {userData.country === "India" ? (
+              <>
+                {/* Capture Aadhar */}
+                <Grid container item xs={10} sm={10} md={10} lg={6} xl={6} justify="center" alignItems="center">
+                  <Link className={classes.link} to={`/${userId}/capture-id-front`}>
+                    <Button
+                        className={classes.button}
+                        variant="outlined"
+                        onClick={() => {
+                          dispatch(setUserData({
+                            ...userData,
+                            cardType: 'AADHAR'
+                          }))
+                        }}
+                    >
+                      Capture Aadhar
+                    </Button>
+                  </Link>
+                </Grid>
+                <br/>
+                {/* Capture PAN */}
+                <Grid container item xs={10} sm={10} md={10} lg={6} xl={6} justify="center" alignItems="center">
+                  <Link className={classes.link} to={`/${userId}/capture-id-front`}>
+                    <Button
+                        className={classes.button}
+                        variant="outlined"
+                        onClick={() => {
+                          dispatch(setUserData({
+                            ...userData,
+                            cardType: 'PAN'
+                          }))
+                        }}
+                    >
+                      Capture PAN
+                    </Button>
+                  </Link>
+                </Grid>
+              </>
+          ) : (
+              <>
+                {/* Capture Passport */}
+                <Grid container item xs={10} sm={10} md={10} lg={6} xl={6} justify="center" alignItems="center">
+                  <Link className={classes.link} to={`/${userId}/capture-id-front`}>
+                    <Button
+                        className={classes.button}
+                        variant="outlined"
+                        onClick={() => {
+                          dispatch(setUserData({
+                            ...userData,
+                            cardType: 'PP'
+                          }))
+                        }}
+                    >
+                      Capture Passport
+                    </Button>
+                  </Link>
+                </Grid>
+
+                {/* Capture Driving License */}
+                <Grid container item xs={10} sm={10} md={10} lg={6} xl={6} justify="center" alignItems="center">
+                  <Link className={classes.link} to={`/${userId}/capture-id-front`}>
+                    <Button
+                        className={classes.button}
+                        variant="outlined"
+                        onClick={() => {
+                          dispatch(setUserData({
+                            ...userData,
+                            cardType: 'DL'
+                          }))
+                        }}
+                    >
+                      Capture Driving License
+                    </Button>
+                  </Link>
+                </Grid>
+              </>
+          )}
 
 
 
-          <Grid
-            container
-            item
-            xs={10}
-            sm={10}
-            md={10}
-            lg={6}
-            xl={6}
-            justify="center"
-            alignItems="center"
-            
-          >
-            <Link className={classes.link} to={`/${userId}/capture-id-front`}>
-              <Button
-                className={classes.button}
-                variant="outlined"
-                onClick={() => {
-                  dispatch(setUserData({
-                    ...userData,
-                    cardType: 'PP'
-                  }))
-                }}
-              >
-                Capture Passport
-            </Button>
-            </Link>
-          </Grid>
-
-
-          <Grid
-            container
-            item
-            xs={10}
-            sm={10}
-            md={10}
-            lg={6}
-            xl={6}
-            justify="center"
-            alignItems="center"
-            className={classes.item}
-          >
-            <Link className={classes.link} to={`/${userId}/capture-id-front`}>
-              <Button
-                className={classes.button}
-                variant="outlined"
-                onClick={() => {
-                  dispatch(setUserData({
-                    ...userData,
-                    cardType: 'DL'
-                  }))
-                }}
-              >
-                Capture Driving Liscense
-            </Button>
-            </Link>
-          </Grid>
 
         </Grid>
       </Slide>
