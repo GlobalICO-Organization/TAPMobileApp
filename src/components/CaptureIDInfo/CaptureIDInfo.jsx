@@ -125,7 +125,7 @@ const CaptureIDInfo = () => {
                         onClick={() => {
                           dispatch(setUserData({
                             ...userData,
-                            cardType: 'AADHAR'
+                            cardType: 'ID'
                           }))
                         }}
                     >
@@ -143,7 +143,7 @@ const CaptureIDInfo = () => {
                         onClick={() => {
                           dispatch(setUserData({
                             ...userData,
-                            cardType: 'PAN'
+                            cardType: 'ID'
                           }))
                         }}
                     >
