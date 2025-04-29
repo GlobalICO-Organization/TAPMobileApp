@@ -125,11 +125,22 @@ const CaptureIDFront = () => {
   }
 
   const handleCapture = () => {
-    window.AcuantCamera.startManualCapture({
+    const options = {
       onCaptured,
-      onCropped
-    }, onError)
+      onCropped,
+      cameraOptions: {
+        useBackCamera: true
+      }
+    };
+  
+    if (!window.AcuantCamera) {
+      console.error('AcuantCamera not available!');
+      return;
+    }
+  
+    window.AcuantCamera.startManualCapture(options, onError)
   }
+  
 
   return (
     <>
