@@ -29,7 +29,8 @@ import {
 import { makeStyles } from '@material-ui/core/styles'
 import { setBackData } from '../../redux/slice/backDataSlice'
 import { setRouteData } from '../../redux/slice/routeDataSlice'
-import Arrow from '@material-ui/icons/ArrowRight'
+import Arrow from '@material-ui/icons/ArrowRight';
+import FlipCameraIosIcon from '@material-ui/icons/FlipCameraIos';
 import { isMobile } from 'react-device-detect';
 
 const useStyles = makeStyles({
@@ -62,7 +63,21 @@ const useStyles = makeStyles({
     backgroundColor: '#EBEBF5',
     fontFamily: 'Lato,sans-serif',
     color: '#093742',
-  }
+  },
+  toggleButton: {
+    width: "48px",
+    height: "48px",
+    minWidth: "48px",
+    borderRadius: "50%",
+    backgroundColor: "#EBEBF5",
+    color: "#093742",
+    boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+    marginLeft: "20px",
+    padding: 0,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 })
 
 const CaptureIDBack = () => {
@@ -77,6 +92,52 @@ const CaptureIDBack = () => {
   const [videoStream, setVideoStream] = useState(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const [useBackCamera, setUseBackCamera] = useState(true);
+
+  const startCamera = async () => {
+      if (videoStream) {
+        videoStream.getTracks().forEach((track) => track.stop());
+      }
+  
+      const constraints = {
+        video: {
+          facingMode: useBackCamera ? { exact: "environment" } : "user",
+        },
+      };
+  
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        setVideoStream(stream);
+      } catch (err) {
+        console.error("Camera error:", err);
+        try {
+          const fallbackStream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+          });
+          setVideoStream(fallbackStream);
+        } catch (fallbackError) {
+          console.error("Fallback also failed:", fallbackError);
+        }
+      }
+    };
+  
+    useEffect(() => {
+      if (videoStream && videoRef.current) {
+        videoRef.current.srcObject = videoStream;
+        videoRef.current.play();
+      }
+    }, [videoStream]);
+  
+    useEffect(() => {
+      if (isMobile) {
+        startCamera();
+      }
+      return () => {
+        if (videoStream) {
+          videoStream.getTracks().forEach((track) => track.stop());
+        }
+      };
+    }, [useBackCamera]);
 
   let result = <>Ensure all texts are visible.</>
   let error = false
@@ -457,19 +518,46 @@ const CaptureIDBack = () => {
       </Slide>
 
       {videoStream && (
-        <div>
-          <video ref={videoRef} style={{ width: '100%', height: '500px' }} />
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>
-            <Button
-              variant="outlined"
-              className={classes.button}
-              onClick={capturePhoto}
-            >
-              Capture Photo
-            </Button>
-          </div>
-        </div>
+  <div>
+    <video ref={videoRef} style={{ width: '100%', height: '500px' }} />
+
+    {/* Button row: capture center, flip right */}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginTop: "20px",
+        padding: "0 20px",
+      }}
+    >
+      {/* Left Spacer (same width as flip button) */}
+      <div style={{ width: "48px" }}></div>
+
+      {/* Center Capture */}
+      <Button
+        variant="outlined"
+        className={classes.button}
+        onClick={capturePhoto}
+      >
+        Capture Photo
+      </Button>
+
+      {/* Right Flip (mobile only) */}
+      {isMobile ? (
+        <Button
+          className={classes.toggleButton}
+          onClick={() => setUseBackCamera((prev) => !prev)}
+        >
+          <FlipCameraIosIcon />
+        </Button>
+      ) : (
+        <div style={{ width: "48px" }}></div>
       )}
+    </div>
+  </div>
+)}
+
 
       <canvas ref={canvasRef} style={{ display: 'none' }} />
 

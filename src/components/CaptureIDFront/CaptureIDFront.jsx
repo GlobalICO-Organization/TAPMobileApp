@@ -1,8 +1,4 @@
-import React, {
-  useEffect,
-  useRef,
-  useState
-} from 'react'
+import React, { useEffect, useRef, useState } from "react";
 import {
   Grid,
   Slide,
@@ -13,29 +9,21 @@ import {
   ListItemText,
   Divider,
   ListItemIcon,
-} from '@material-ui/core'
-import {
-  useHistory,
-  useParams
-} from 'react-router-dom'
-import {
-  useDispatch,
-  useSelector,
-} from 'react-redux'
-import {
-  Alert,
-  AlertTitle
-} from '@material-ui/lab'
-import { makeStyles } from '@material-ui/core/styles'
-import { setFrontData } from '../../redux/slice/frontDataSlice'
-import { setRouteData } from '../../redux/slice/routeDataSlice'
-import Arrow from '@material-ui/icons/ArrowRight'
-import { isMobile } from 'react-device-detect';
+} from "@material-ui/core";
+import { useHistory, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Alert, AlertTitle } from "@material-ui/lab";
+import { makeStyles } from "@material-ui/core/styles";
+import { setFrontData } from "../../redux/slice/frontDataSlice";
+import { setRouteData } from "../../redux/slice/routeDataSlice";
+import Arrow from "@material-ui/icons/ArrowRight";
+import FlipCameraIosIcon from '@material-ui/icons/FlipCameraIos';
+import { isMobile } from "react-device-detect";
 
 const useStyles = makeStyles({
   container: {
-    minHeight: '90vh',
-    textAlign: 'center',
+    minHeight: "90vh",
+    textAlign: "center",
   },
   input: {
     display: "none",
@@ -44,58 +32,126 @@ const useStyles = makeStyles({
     width: "100%",
   },
   circularProgress: {
-    color: '#093742',
+    color: "#093742",
   },
   list: {
     width: "100%",
   },
   item: {
-    marginBottom: '3vh',
+    marginBottom: "3vh",
   },
   alert: {
-    width: '100%'
+    width: "100%",
   },
   alertTitle: {
-    textAlign: 'left'
+    textAlign: "left",
   },
   button: {
-    backgroundColor: '#EBEBF5',
-    fontFamily: 'Lato,sans-serif',
-    color: '#093742',
-  }
-})
+    backgroundColor: "#EBEBF5",
+    fontFamily: "Lato,sans-serif",
+    color: "#093742",
+  },
+  toggleButton: {
+    width: "48px",
+    height: "48px",
+    minWidth: "48px",
+    borderRadius: "50%",
+    backgroundColor: "#EBEBF5",
+    color: "#093742",
+    boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+    marginLeft: "20px",
+    padding: 0,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
 
 const CaptureIDFront = () => {
-  const { userId } = useParams()
-  const classes = useStyles()
-  const history = useHistory()
-  const dispatch = useDispatch()
+  const { userId } = useParams();
+  const classes = useStyles();
+  const history = useHistory();
+  const dispatch = useDispatch();
   const [videoStream, setVideoStream] = useState(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const routeData = useSelector((state) => state.routeData.value)
+  const videoTrackRef = useRef(null);
+  const routeData = useSelector((state) => state.routeData.value);
 
-  const [imageData, setImageData] = useState({})
+  const [imageData, setImageData] = useState({});
   const [processing, setProcessing] = useState(false);
-  console.info(imageData)
+  const [useBackCamera, setUseBackCamera] = useState(true);
 
-  let result = <>Ensure all texts are visible.</>
-  let error = false
+  const startCamera = async () => {
+    if (videoStream) {
+      videoStream.getTracks().forEach((track) => track.stop());
+    }
+
+    const constraints = {
+      video: {
+        facingMode: useBackCamera ? { exact: "environment" } : "user",
+        advanced: [{focusMode: "manual"}]
+      },
+    };
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      setVideoStream(stream);
+
+      const videoTrack = stream.getVideoTracks()[0];
+    if (videoTrack && videoTrack.getCapabilities().focusDistance) {
+      // Store the video track for focus control
+      videoTrackRef.current = videoTrack;
+    }
+    } catch (err) {
+      console.error("Camera error:", err);
+      try {
+        const fallbackStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
+        setVideoStream(fallbackStream);
+        videoTrackRef.current = fallbackStream.getVideoTracks()[0];
+      } catch (fallbackError) {
+        console.error("Fallback also failed:", fallbackError);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (videoStream && videoRef.current) {
+      videoRef.current.srcObject = videoStream;
+      videoRef.current.play();
+    }
+  }, [videoStream]);
+
+  useEffect(() => {
+    if (isMobile) {
+      startCamera();
+    }
+    return () => {
+      if (videoStream) {
+        videoStream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [useBackCamera]);
+
+  let result = <>Ensure all texts are visible.</>;
+  let error = false;
   if (imageData?.dpi < 300) {
-    result = <>Quality of Image is Low</>
-    error = true
+    result = <>Quality of Image is Low</>;
+    error = true;
   } else {
     if (imageData?.sharpness < 50) {
-      result = <>Image appears Blurry</>
-      error = true
+      result = <>Image appears Blurry</>;
+      error = true;
     } else {
       if (imageData?.glare < 90) {
-        result = <>Image has Glare</>
-        error = true
+        result = <>Image has Glare</>;
+        error = true;
       } else {
         if (imageData?.cardType === 0) {
-          result = <>Unable to Detect Document</>
-          error = true
+          result = <>Unable to Detect Document</>;
+          error = true;
         }
       }
     }
@@ -104,18 +160,19 @@ const CaptureIDFront = () => {
   useEffect(() => {
     (async () => {
       if (routeData.isCaptureIDInfo) {
-        dispatch(setRouteData({
-          isHome: true,
-          isPersonalInfo: true,
-          isCaptureIDInfo: true,
-          isCaptureIDFront: true,
-        }))
+        dispatch(
+          setRouteData({
+            isHome: true,
+            isPersonalInfo: true,
+            isCaptureIDInfo: true,
+            isCaptureIDFront: true,
+          })
+        );
+      } else {
+        history.push(`/${userId}`);
       }
-      else {
-        history.push(`/${userId}`)
-      }
-    })()
-  }, [])
+    })();
+  }, []);
 
   // const onCaptured = (response) => {
   //   setProcessing(true)
@@ -131,9 +188,9 @@ const CaptureIDFront = () => {
   // }
 
   const handleSubmit = () => {
-    dispatch(setFrontData(imageData))
-    history.push(`/${userId}/capture-id-back`)
-  }
+    dispatch(setFrontData(imageData));
+    history.push(`/${userId}/capture-id-back`);
+  };
 
   // const handleCapture = () => {
   //   window.AcuantCamera.startManualCapture({
@@ -155,7 +212,7 @@ const CaptureIDFront = () => {
         videoRef.current.play();
       }
     } catch (error) {
-      console.error('Error accessing camera:', error);
+      console.error("Error accessing camera:", error);
     }
   };
 
@@ -164,8 +221,7 @@ const CaptureIDFront = () => {
 
     const canvas = canvasRef.current;
     const video = videoRef.current;
-    const context = canvas.getContext('2d');
-
+    const context = canvas.getContext("2d");
 
     // Set canvas dimensions to match the video frame
     canvas.width = video.videoWidth;
@@ -175,7 +231,7 @@ const CaptureIDFront = () => {
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     // Convert canvas to image data
-    const imageDataUrl = canvas.toDataURL('image/png');
+    const imageDataUrl = canvas.toDataURL("image/png");
     setImageData(imageDataUrl);
 
     // Stop the video stream
@@ -191,34 +247,55 @@ const CaptureIDFront = () => {
   };
 
   const getBase64 = (file, cb) => {
-    let reader = new FileReader()
-    reader.readAsDataURL(file)
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
     reader.onload = function () {
-      cb(reader.result)
-    }
+      cb(reader.result);
+    };
     reader.onerror = function (err) {
-      console.log(err)
-    }
-  }
+      console.log(err);
+    };
+  };
 
   const handleFileUpload = (target) => {
     if (target.files) {
       if (target.files.length !== 0) {
-        const file = target.files[0]
-        getBase64(file, (r) => setImageData(r))
+        const file = target.files[0];
+        getBase64(file, (r) => setImageData(r));
       }
     }
-  }
+  };
+
+  const handleTapToFocus = (event) => {
+    if (!videoTrackRef.current || !videoRef.current) return;
+  
+    const video = videoRef.current;
+    const rect = video.getBoundingClientRect();
+    
+    // Calculate tap position relative to video element
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    
+    // Normalize coordinates (0 to 1)
+    const normalizedX = x / rect.width;
+    const normalizedY = y / rect.height;
+  
+    try {
+      // Try to set focus point (this API might not be available on all browsers/devices)
+      if (videoTrackRef.current.getCapabilities().focusDistance) {
+        videoTrackRef.current.applyConstraints({
+          advanced: [{ focusMode: "manual", pointsOfInterest: [{x: normalizedX, y: normalizedY}] }]
+        });
+      }
+    } catch (err) {
+      console.error("Focus error:", err);
+    }
+  };
 
   return (
     <>
-      <Slide
-        direction="left"
-        in={true}
-        mountOnEnter
-        unmountOnExit
-      >
-        {(!processing && !videoStream) && JSON.stringify(imageData) === '{}' ?
+      <Slide direction="left" in={true} mountOnEnter unmountOnExit>
+        {!processing && !videoStream && JSON.stringify(imageData) === "{}" ? (
           <Grid
             container
             direction="column"
@@ -254,46 +331,39 @@ const CaptureIDFront = () => {
               xl={6}
               className={classes.item}
             >
-              <List
-                className={classes.list}
-              >
+              <List className={classes.list}>
                 <Divider />
-                <ListItem >
+                <ListItem>
                   <ListItemIcon>
                     <Arrow />
                   </ListItemIcon>
                   <ListItemText>
-
                     {isMobile && "Place ID close to device."}
                     {!isMobile && "Ensure quality of image is good"}
-
                   </ListItemText>
                 </ListItem>
                 <Divider />
-                <ListItem >
+                <ListItem>
                   <ListItemIcon>
                     <Arrow />
                   </ListItemIcon>
-                  <ListItemText>
-                    Ensure sufficient light.
-                  </ListItemText>
+                  <ListItemText>Ensure sufficient light.</ListItemText>
                 </ListItem>
 
                 <Divider />
-                {isMobile && <>
-                  <ListItem >
-                    <ListItemIcon>
-                      <Arrow />
-                    </ListItemIcon>
-                    <ListItemText>
-                      Hold device steady.
-                    </ListItemText>
-                  </ListItem>
-                  <Divider />
-                </>
-                }
+                {isMobile && (
+                  <>
+                    <ListItem>
+                      <ListItemIcon>
+                        <Arrow />
+                      </ListItemIcon>
+                      <ListItemText>Hold device steady.</ListItemText>
+                    </ListItem>
+                    <Divider />
+                  </>
+                )}
 
-                <ListItem >
+                <ListItem>
                   <ListItemIcon>
                     <Arrow />
                   </ListItemIcon>
@@ -302,7 +372,7 @@ const CaptureIDFront = () => {
                   </ListItemText>
                 </ListItem>
                 <Divider />
-                <ListItem >
+                <ListItem>
                   <ListItemIcon>
                     <Arrow />
                   </ListItemIcon>
@@ -325,7 +395,7 @@ const CaptureIDFront = () => {
               xl={6}
               className={classes.item}
             >
-               <input
+              <input
                 accept="image/*"
                 className={classes.input}
                 id="icon-button-file"
@@ -344,9 +414,10 @@ const CaptureIDFront = () => {
               {/*    Upload*/}
               {/*  </Button>*/}
               {/*</label>*/}
+
               <Button
                 fullWidth
-                style={{ marginTop: '20px' }}
+                style={{ marginTop: "20px" }}
                 aria-label="capture picture"
                 variant="outlined"
                 className={classes.button}
@@ -355,125 +426,145 @@ const CaptureIDFront = () => {
                 Capture
               </Button>
             </Grid>
-          </Grid> : <> {(!processing && !videoStream) && <Grid
-            container
-            direction="column"
-            justify="flex-start"
-            alignItems="center"
-            className={classes.container}
-          >
-
-            <Grid item>
-              <h2>
-                <b>
-                  Result
-                </b>
-              </h2>
-            </Grid>
-
-            <Grid
-              container
-              item
-              xs={10}
-              sm={10}
-              md={10}
-              lg={6}
-              xl={6}
-              className={classes.item}
-            >
-              <Alert
-                variant="outlined"
-                className={classes.alert}
-                severity={error ? "error" : "success"}>
-                <AlertTitle
-                  className={classes.alertTitle}
-                >{error ? "Please Retry" : "You May Continue"}</AlertTitle>
-                {result}
-              </Alert>
-            </Grid>
-
-            <Grid
-              container
-              item
-              xs={10}
-              sm={10}
-              md={10}
-              lg={6}
-              xl={6}
-              className={classes.item}
-            >
-              <img
-              src={imageData}
-               // src={JSON.stringify(imageData) !== '{}' ? imageData.image.data : ' '}
-                alt="User Document"
-                width="100%"
-                height="100%"
-              >
-              </img>
-            </Grid>
-
-            <Grid
-              container
-              item
-              xs={10}
-              sm={10}
-              md={10}
-              lg={6}
-              xl={6}
-              className={classes.item}
-            >
-              <Button
-                fullWidth
-                onClick={handleSubmit}
-                className={classes.button}
-                variant="outlined"
-              >
-                Next
-              </Button>
-            </Grid>
-
-            <Grid
-              container
-              item
-              xs={10}
-              sm={10}
-              md={10}
-              lg={6}
-              xl={6}
-              className={classes.item}
-            >
-              <Button
-                fullWidth
-                variant="outlined"
-                onClick={() => setImageData({})}
-              >
-                Retry
-              </Button>
-            </Grid>
           </Grid>
-          }
+        ) : (
+          <>
+            {" "}
+            {!processing && !videoStream && (
+              <Grid
+                container
+                direction="column"
+                justify="flex-start"
+                alignItems="center"
+                className={classes.container}
+              >
+                <Grid item>
+                  <h2>
+                    <b>Result</b>
+                  </h2>
+                </Grid>
+
+                <Grid
+                  container
+                  item
+                  xs={10}
+                  sm={10}
+                  md={10}
+                  lg={6}
+                  xl={6}
+                  className={classes.item}
+                >
+                  <Alert
+                    variant="outlined"
+                    className={classes.alert}
+                    severity={error ? "error" : "success"}
+                  >
+                    <AlertTitle className={classes.alertTitle}>
+                      {error ? "Please Retry" : "You May Continue"}
+                    </AlertTitle>
+                    {result}
+                  </Alert>
+                </Grid>
+
+                <Grid
+                  container
+                  item
+                  xs={10}
+                  sm={10}
+                  md={10}
+                  lg={6}
+                  xl={6}
+                  className={classes.item}
+                >
+                  <img
+                    src={imageData}
+                    // src={JSON.stringify(imageData) !== '{}' ? imageData.image.data : ' '}
+                    alt="User Document"
+                    width="100%"
+                    height="100%"
+                  ></img>
+                </Grid>
+
+                <Grid
+                  container
+                  item
+                  xs={10}
+                  sm={10}
+                  md={10}
+                  lg={6}
+                  xl={6}
+                  className={classes.item}
+                >
+                  <Button
+                    fullWidth
+                    onClick={handleSubmit}
+                    className={classes.button}
+                    variant="outlined"
+                  >
+                    Next
+                  </Button>
+                </Grid>
+
+                <Grid
+                  container
+                  item
+                  xs={10}
+                  sm={10}
+                  md={10}
+                  lg={6}
+                  xl={6}
+                  className={classes.item}
+                >
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    onClick={() => setImageData({})}
+                  >
+                    Retry
+                  </Button>
+                </Grid>
+              </Grid>
+            )}
           </>
-        }
+        )}
       </Slide>
+
       {videoStream && (
         <div>
-          <video ref={videoRef} style={{ width: '100%', height: '500px' }} />
-          <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px'}}>
-          <Button
-            variant="outlined"
-            className={classes.button}
-            onClick={capturePhoto}
-          >
-            Capture Photo
-          </Button>
+          <video onClick={handleTapToFocus} ref={videoRef} style={{ width: "100%", height: "500px" }} />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginTop: "20px",
+              padding: "0 20px",
+            }}
+          > 
+            <div style={{ width: '48px' }}></div>
+            <Button
+              variant="outlined"
+              className={classes.button}
+              onClick={capturePhoto}
+            >
+              Capture Photo
+            </Button>
+            {isMobile && (
+              <Button
+                className={classes.toggleButton}
+                onClick={() => setUseBackCamera((prev) => !prev)}
+              >
+                {useBackCamera ? <FlipCameraIosIcon /> : <FlipCameraIosIcon />}
+              </Button>
+            )}
           </div>
         </div>
       )}
 
-      <canvas ref={canvasRef} style={{ display: 'none' }} />
+      <canvas ref={canvasRef} style={{ display: "none" }} />
 
-      {
-        processing && <Grid
+      {processing && (
+        <Grid
           container
           item
           direction="column"
@@ -481,13 +572,11 @@ const CaptureIDFront = () => {
           justify="center"
           alignItems="center"
         >
-          <CircularProgress
-            className={classes.circularProgress}
-          />
+          <CircularProgress className={classes.circularProgress} />
         </Grid>
-      }
+      )}
     </>
-  )
-}
+  );
+};
 
-export default CaptureIDFront
+export default CaptureIDFront;
