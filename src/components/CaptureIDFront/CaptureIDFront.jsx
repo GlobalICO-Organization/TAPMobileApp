@@ -9,6 +9,8 @@ import {
   ListItemText,
   Divider,
   ListItemIcon,
+  Box,
+  IconButton
 } from "@material-ui/core";
 import { useHistory, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,7 +22,7 @@ import Arrow from "@material-ui/icons/ArrowRight";
 import FlipCameraIosIcon from '@material-ui/icons/FlipCameraIos';
 import { isMobile } from "react-device-detect";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   container: {
     minHeight: "90vh",
     textAlign: "center",
@@ -65,7 +67,59 @@ const useStyles = makeStyles({
     justifyContent: "center",
     alignItems: "center",
   },
-});
+  buttonRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center', // Center the whole group
+    alignItems: 'center',
+    marginTop: theme.spacing(2),
+    padding: theme.spacing(0, 2),
+    gap: theme.spacing(2), // Equal spacing between buttons
+    [theme.breakpoints.down('xs')]: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    },
+  },
+  
+  spacer: {
+    width: 48,
+    [theme.breakpoints.down('xs')]: {
+      display: 'none',
+    },
+  },
+  capturePhotoButton: {
+    backgroundColor: '#EBEBF5',
+    fontFamily: 'Lato,sans-serif',
+    color: '#093742',
+    [theme.breakpoints.down('xs')]: {
+      width: '100%',
+    },
+  },
+  toggleButtonResponsive: {
+    width: 48,
+    height: 48,
+    minWidth: 48,
+    borderRadius: '50%',
+    backgroundColor: '#EBEBF5',
+    color: '#093742',
+    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+    marginLeft: 20,
+    padding: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    [theme.breakpoints.down('xs')]: {
+      marginLeft: 0,
+      marginTop: theme.spacing(2),
+      width: '100%',
+      height: 'auto',
+      borderRadius: theme.shape.borderRadius,
+    },
+  },
+  
+}));
 
 const CaptureIDFront = () => {
   const { userId } = useParams();
@@ -531,33 +585,31 @@ const CaptureIDFront = () => {
 
       {videoStream && (
         <div>
-          <video onClick={handleTapToFocus} ref={videoRef} style={{ width: "100%", height: "500px" }} />
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginTop: "20px",
-              padding: "0 20px",
-            }}
-          > 
-            <div style={{ width: '48px' }}></div>
+          <video
+            onClick={handleTapToFocus}
+            ref={videoRef}
+            style={{ width: '100%', height: '500px' }}
+          />
+          <Box className={classes.buttonRow}>
+          <div style={{ width: '48px' }}></div>
+
             <Button
               variant="outlined"
-              className={classes.button}
               onClick={capturePhoto}
+              className={classes.button}
             >
               Capture Photo
             </Button>
+
             {isMobile && (
-              <Button
+              <IconButton
                 className={classes.toggleButton}
                 onClick={() => setUseBackCamera((prev) => !prev)}
               >
-                {useBackCamera ? <FlipCameraIosIcon /> : <FlipCameraIosIcon />}
-              </Button>
+                <FlipCameraIosIcon />
+              </IconButton>
             )}
-          </div>
+          </Box>
         </div>
       )}
 

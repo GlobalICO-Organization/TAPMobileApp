@@ -13,6 +13,8 @@ import {
   ListItemText,
   Divider,
   ListItemIcon,
+  Box,
+  IconButton
 } from '@material-ui/core'
 import {
   useHistory,
@@ -33,7 +35,7 @@ import Arrow from '@material-ui/icons/ArrowRight';
 import FlipCameraIosIcon from '@material-ui/icons/FlipCameraIos';
 import { isMobile } from 'react-device-detect';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   input: {
     display: "none",
   },
@@ -78,7 +80,58 @@ const useStyles = makeStyles({
     justifyContent: "center",
     alignItems: "center",
   },
-})
+  buttonRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center', // Center the whole group
+    alignItems: 'center',
+    marginTop: theme.spacing(2),
+    padding: theme.spacing(0, 2),
+    gap: theme.spacing(2), // Equal spacing between buttons
+    [theme.breakpoints.down('xs')]: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    },
+  },
+  
+  spacer: {
+    width: 48,
+    [theme.breakpoints.down('xs')]: {
+      display: 'none',
+    },
+  },
+  capturePhotoButton: {
+    backgroundColor: '#EBEBF5',
+    fontFamily: 'Lato,sans-serif',
+    color: '#093742',
+    [theme.breakpoints.down('xs')]: {
+      width: '100%',
+    },
+  },
+  toggleButtonResponsive: {
+    width: 48,
+    height: 48,
+    minWidth: 48,
+    borderRadius: '50%',
+    backgroundColor: '#EBEBF5',
+    color: '#093742',
+    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+    marginLeft: 20,
+    padding: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    [theme.breakpoints.down('xs')]: {
+      marginLeft: 0,
+      marginTop: theme.spacing(2),
+      width: '100%',
+      height: 'auto',
+      borderRadius: theme.shape.borderRadius,
+    },
+  },
+}));
 
 const CaptureIDBack = () => {
   const { userId } = useParams()
@@ -518,45 +571,30 @@ const CaptureIDBack = () => {
       </Slide>
 
       {videoStream && (
-  <div>
-    <video ref={videoRef} style={{ width: '100%', height: '500px' }} />
+        <div>
+          <video ref={videoRef} style={{ width: '100%', height: '500px' }} />
+          <Box className={classes.buttonRow}>
+          <div style={{ width: '48px' }}></div>
 
-    {/* Button row: capture center, flip right */}
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginTop: "20px",
-        padding: "0 20px",
-      }}
-    >
-      {/* Left Spacer (same width as flip button) */}
-      <div style={{ width: "48px" }}></div>
+            <Button
+              variant="outlined"
+              onClick={capturePhoto}
+              className={classes.button}
+            >
+              Capture Photo
+            </Button>
 
-      {/* Center Capture */}
-      <Button
-        variant="outlined"
-        className={classes.button}
-        onClick={capturePhoto}
-      >
-        Capture Photo
-      </Button>
-
-      {/* Right Flip (mobile only) */}
-      {isMobile ? (
-        <Button
-          className={classes.toggleButton}
-          onClick={() => setUseBackCamera((prev) => !prev)}
-        >
-          <FlipCameraIosIcon />
-        </Button>
-      ) : (
-        <div style={{ width: "48px" }}></div>
+            {isMobile && (
+              <IconButton
+                className={classes.toggleButton}
+                onClick={() => setUseBackCamera((prev) => !prev)}
+              >
+                <FlipCameraIosIcon />
+              </IconButton>
+            )}
+          </Box>
+        </div>
       )}
-    </div>
-  </div>
-)}
 
 
       <canvas ref={canvasRef} style={{ display: 'none' }} />
