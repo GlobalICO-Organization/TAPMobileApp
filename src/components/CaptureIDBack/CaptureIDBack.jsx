@@ -315,12 +315,20 @@ const CaptureIDBack = () => {
   }
 
   const handleFileUpload = (target) => {
-    if (target.files) {
-      if (target.files.length !== 0) {
-        const file = target.files[0]
-        getBase64(file, (r) => setImageData(r))
-      }
+    if (target.files && target.files.length !== 0) {
+      const file = target.files[0]
+      if (!file.type.startsWith('image/')) return
+      getBase64(file, (r) => {
+        // Stop the camera if it is running so the result screen is shown
+        if (videoStream) {
+          videoStream.getTracks().forEach((track) => track.stop())
+          setVideoStream(null)
+        }
+        setImageData(r)
+      })
     }
+    // Reset so the same file can be selected again after Retry
+    target.value = ''
   }
 
   return (
@@ -438,25 +446,17 @@ const CaptureIDBack = () => {
               xl={6}
               className={classes.item}
             >
-              <input
-                accept="image/*"
-                className={classes.input}
-                id="icon-button-file"
-                type="file"
-                capture="user"
-                onChange={(e) => handleFileUpload(e.target)}
-              />
-              {/*<label className={classes.label} htmlFor="icon-button-file">*/}
-              {/*  <Button*/}
-              {/*    fullWidth*/}
-              {/*    className={classes.button}*/}
-              {/*    aria-label="upload picture"*/}
-              {/*    component="span"*/}
-              {/*    variant="outlined"*/}
-              {/*  >*/}
-              {/*    Upload*/}
-              {/*  </Button>*/}
-              {/*</label>*/}
+              <label className={classes.label} htmlFor="upload-id-back">
+                <Button
+                  fullWidth
+                  className={classes.button}
+                  aria-label="upload picture"
+                  component="span"
+                  variant="outlined"
+                >
+                  Upload
+                </Button>
+              </label>
               <Button
                 fullWidth
                 style={{ marginTop: '20px' }}
@@ -584,6 +584,16 @@ const CaptureIDBack = () => {
               Capture Photo
             </Button>
 
+            <label htmlFor="upload-id-back">
+              <Button
+                variant="outlined"
+                component="span"
+                className={classes.button}
+              >
+                Upload
+              </Button>
+            </label>
+
             {isMobile && (
               <IconButton
                 className={classes.toggleButton}
@@ -598,6 +608,14 @@ const CaptureIDBack = () => {
 
 
       <canvas ref={canvasRef} style={{ display: 'none' }} />
+
+      <input
+        accept="image/*"
+        className={classes.input}
+        id="upload-id-back"
+        type="file"
+        onChange={(e) => handleFileUpload(e.target)}
+      />
 
       {
         processing && <Grid
